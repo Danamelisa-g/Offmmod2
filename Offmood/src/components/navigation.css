@@ -1,0 +1,292 @@
+:root {
+  --color-primary: #2BA9D1;
+  --color-primary-dark: #1e8aaa;
+  --color-text: #2d2d2d;
+  --color-text-muted: #8a8a8a;
+  --color-bg: #f0eeeb;
+  --color-surface: #ffffff;
+  --color-border: #e0ddd8;
+  --sidebar-width: 260px;
+  --navbar-height: 64px;
+  --radius: 12px;
+  --transition: 0.2s ease;
+}
+ 
+/* ===========================
+   LAYOUT DE LA APP
+   Úsalo en App.tsx como className="app-layout"
+   =========================== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  font-family: 'Inter', Arial, sans-serif;
+}
+ 
+.app-main {
+  flex: 1;
+  margin-left: var(--sidebar-width); /* espacio para el sidebar en desktop */
+  padding: 24px;
+  min-height: 100vh;
+}
+ 
+/* En móvil: el contenido ocupa todo el ancho */
+@media (max-width: 768px) {
+  .app-main {
+    margin-left: 0;
+    /* padding inferior para no quedar debajo del navbar */
+    padding: 16px 16px calc(var(--navbar-height) + 16px);
+  }
+}
+ 
+/* ===========================
+   SIDEBAR (solo en desktop)
+   =========================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  z-index: 100;
+  transition: transform var(--transition);
+}
+ 
+/* En móvil el sidebar se esconde fuera de pantalla */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  /* Cuando está abierto (sidebar--open), aparece */
+  .sidebar--open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+  }
+}
+ 
+/* Overlay que oscurece el fondo en móvil */
+.sidebar-overlay {
+  display: none;
+}
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0; /* top:0 right:0 bottom:0 left:0 */
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 99;
+  }
+}
+ 
+/* Logo */
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  margin-bottom: 32px;
+}
+.sidebar__logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+ 
+/* Links de navegación */
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+ 
+.sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background var(--transition), color var(--transition);
+  position: relative;
+}
+.sidebar__nav-item:hover {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+.sidebar__nav-item--active {
+  color: var(--color-primary);
+}
+/* Línea azul a la izquierda del item activo */
+.sidebar__nav-item--active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background-color: var(--color-primary);
+  border-radius: 0 3px 3px 0;
+}
+ 
+.sidebar__nav-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+ 
+/* Botón Create Post */
+.sidebar__create-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  border-radius: var(--radius);
+  border: none;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background var(--transition);
+}
+.sidebar__create-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+.sidebar__create-btn:active {
+  transform: scale(0.98);
+}
+ 
+/* Empuja el footer al fondo */
+.sidebar__spacer {
+  flex: 1;
+}
+ 
+/* Footer */
+.sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+ 
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+}
+.sidebar__user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.sidebar__user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+ 
+.sidebar__logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background var(--transition), color var(--transition);
+}
+.sidebar__logout-btn:hover {
+  background-color: #fce8e8;
+  color: #d93025;
+}
+ 
+/* ===========================
+   NAVBAR (solo en móvil)
+   Barra inferior de navegación
+   =========================== */
+.navbar {
+  display: none; /* invisible en desktop */
+}
+ 
+@media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    z-index: 100;
+    padding: 0 8px;
+    /* Soporte para iPhone con notch */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+ 
+.navbar__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition);
+  border-radius: 8px;
+}
+.navbar__tab:hover {
+  color: var(--color-text);
+}
+.navbar__tab--active {
+  color: var(--color-text);
+}
+ 
+.navbar__tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.navbar__tab-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+ 
+.navbar__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.navbar__avatar--active {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+ 
