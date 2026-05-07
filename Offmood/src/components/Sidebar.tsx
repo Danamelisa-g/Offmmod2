@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
+import logo from "../assets/Frame 20.png";
  
-// ─── Tipos ────────────────────────────────────────────────────────────────────
- 
+//tipos para navegacion 
 interface NavItem {
   id: string;
   label: string;
@@ -55,13 +55,11 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useAppContext();
  
-  // useMemo: calcula la lista de items solo una vez
   const navItems: NavItem[] = useMemo(() => [
     { id: 'feed',     label: 'Feed',            path: '/feed',     icon: <IconHome /> },
     { id: 'emotions', label: 'Emotion History', path: '/emotions', icon: <IconEmoji /> },
   ], []);
  
-  // useCallback: evita recrear funciones en cada render
   const handleNavClick = useCallback((path: string) => {
     dispatch({ type: 'SET_ACTIVE_PATH', payload: path });
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: false });
@@ -92,13 +90,9 @@ const Sidebar: React.FC = () => {
  
       <aside className={`sidebar ${state.sidebarOpen ? 'sidebar--open' : ''}`}>
  
-        {/* Logo */}
+        {/* Logo — tamaño controlado para no romper el layout */}
         <div className="sidebar__logo">
-          <svg width="32" height="32" viewBox="0 0 50 50" fill="none">
-            <rect x="5" y="15" width="18" height="20" rx="9" fill="#2BA9D1" />
-            <rect x="27" y="15" width="18" height="20" rx="9" fill="#2BA9D1" />
-          </svg>
-          <span className="sidebar__logo-text">offmood</span>
+          <img src={logo} alt="Offmood Logo" className="sidebar__logo-img" />
         </div>
  
         {/* Navegación */}
@@ -127,7 +121,7 @@ const Sidebar: React.FC = () => {
  
         <div className="sidebar__spacer" />
  
-        {/* Usuario y Logout */}
+        {/* Usuario y Logout — siempre visibles al fondo */}
         <div className="sidebar__footer">
           {state.currentUser && (
             <div className="sidebar__user">

@@ -12,10 +12,10 @@ import './components/navigation.css';
 // import CreatePostPage from './pages/CreatePostPage';
  
 // ── Placeholder temporal mientras creas las páginas ───────────────────────
-const FeedPage = () => <h1 style={{ padding: '24px' }}>📰 Feed</h1>;
-const EmotionsPage = () => <h1 style={{ padding: '24px' }}>😊 Emotion History</h1>;
-const ProfilePage = () => <h1 style={{ padding: '24px' }}>👤 Profile</h1>;
-const CreatePostPage = () => <h1 style={{ padding: '24px' }}>✏️ Create Post</h1>;
+const FeedPage = () => <h1 style={{ padding: '24px' }}>Feed</h1>;
+const EmotionsPage = () => <h1 style={{ padding: '24px' }}>Emotion History</h1>;
+const ProfilePage = () => <h1 style={{ padding: '24px' }}>Profile</h1>;
+const CreatePostPage = () => <h1 style={{ padding: '24px' }}>Create Post</h1>;
  
 // ─── Componente principal ─────────────────────────────────────────────────────
  

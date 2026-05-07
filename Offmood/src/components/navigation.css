@@ -11,10 +11,9 @@
   --radius: 12px;
   --transition: 0.2s ease;
 }
- 
+
 /* ===========================
    LAYOUT DE LA APP
-   Úsalo en App.tsx como className="app-layout"
    =========================== */
 .app-layout {
   display: flex;
@@ -22,25 +21,23 @@
   background-color: var(--color-bg);
   font-family: 'Inter', Arial, sans-serif;
 }
- 
+
 .app-main {
   flex: 1;
-  margin-left: var(--sidebar-width); /* espacio para el sidebar en desktop */
+  margin-left: var(--sidebar-width);
   padding: 24px;
   min-height: 100vh;
 }
- 
-/* En móvil: el contenido ocupa todo el ancho */
+
 @media (max-width: 768px) {
   .app-main {
     margin-left: 0;
-    /* padding inferior para no quedar debajo del navbar */
     padding: 16px 16px calc(var(--navbar-height) + 16px);
   }
 }
- 
+
 /* ===========================
-   SIDEBAR (solo en desktop)
+   SIDEBAR
    =========================== */
 .sidebar {
   position: fixed;
@@ -52,24 +49,24 @@
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
+  /* padding reducido arriba para que el logo no empuje todo */
+  padding: 16px 16px 16px;
   z-index: 100;
   transition: transform var(--transition);
+  overflow: hidden; /* evita scroll interno */
 }
- 
-/* En móvil el sidebar se esconde fuera de pantalla */
+
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
   }
-  /* Cuando está abierto (sidebar--open), aparece */
   .sidebar--open {
     transform: translateX(0);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
   }
 }
- 
-/* Overlay que oscurece el fondo en móvil */
+
+/* Overlay en móvil */
 .sidebar-overlay {
   display: none;
 }
@@ -77,34 +74,35 @@
   .sidebar-overlay {
     display: block;
     position: fixed;
-    inset: 0; /* top:0 right:0 bottom:0 left:0 */
+    inset: 0;
     background: rgba(0, 0, 0, 0.35);
     z-index: 99;
   }
 }
- 
-/* Logo */
+
+/* Logo — tamaño fijo pequeño para no romper el layout */
 .sidebar__logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 8px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  padding: 0 4px;
+  flex-shrink: 0; /* nunca se comprime */
 }
-.sidebar__logo-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
+
+.sidebar__logo-img {
+  width: 160px;
+  height: auto;
+  object-fit: contain;
 }
- 
+
 /* Links de navegación */
 .sidebar__nav {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
 }
- 
+
 .sidebar__nav-item {
   display: flex;
   align-items: center;
@@ -129,7 +127,6 @@
 .sidebar__nav-item--active {
   color: var(--color-primary);
 }
-/* Línea azul a la izquierda del item activo */
 .sidebar__nav-item--active::before {
   content: '';
   position: absolute;
@@ -141,13 +138,13 @@
   background-color: var(--color-primary);
   border-radius: 0 3px 3px 0;
 }
- 
+
 .sidebar__nav-icon {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
- 
+
 /* Botón Create Post */
 .sidebar__create-btn {
   display: flex;
@@ -164,6 +161,7 @@
   cursor: pointer;
   width: 100%;
   transition: background var(--transition);
+  flex-shrink: 0;
 }
 .sidebar__create-btn:hover {
   background-color: var(--color-primary-dark);
@@ -171,19 +169,23 @@
 .sidebar__create-btn:active {
   transform: scale(0.98);
 }
- 
-/* Empuja el footer al fondo */
+
+/* Empuja el footer al fondo — con min-height 0 para que flex funcione bien */
 .sidebar__spacer {
   flex: 1;
+  min-height: 0;
 }
- 
-/* Footer */
+
+/* Footer — siempre visible al fondo */
 .sidebar__footer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
 }
- 
+
 .sidebar__user {
   display: flex;
   align-items: center;
@@ -195,18 +197,19 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 .sidebar__user-name {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--color-text);
 }
- 
+
 .sidebar__logout-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 40px;
+  padding: 35px 30px;
   border-radius: 8px;
   border: none;
   background: transparent;
@@ -221,15 +224,14 @@
   background-color: #fce8e8;
   color: #d93025;
 }
- 
+
 /* ===========================
    NAVBAR (solo en móvil)
-   Barra inferior de navegación
    =========================== */
 .navbar {
-  display: none; /* invisible en desktop */
+  display: none;
 }
- 
+
 @media (max-width: 768px) {
   .navbar {
     display: flex;
@@ -242,11 +244,10 @@
     border-top: 1px solid var(--color-border);
     z-index: 100;
     padding: 0 8px;
-    /* Soporte para iPhone con notch */
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
- 
+
 .navbar__tab {
   display: flex;
   flex-direction: column;
@@ -268,7 +269,7 @@
 .navbar__tab--active {
   color: var(--color-text);
 }
- 
+
 .navbar__tab-icon {
   display: flex;
   align-items: center;
@@ -278,7 +279,7 @@
   font-size: 0.7rem;
   font-weight: 500;
 }
- 
+
 .navbar__avatar {
   width: 28px;
   height: 28px;
@@ -289,4 +290,3 @@
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
- 
