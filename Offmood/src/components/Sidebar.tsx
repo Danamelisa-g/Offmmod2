@@ -11,7 +11,7 @@ interface NavItem {
   icon: JSX.Element;
 }
  
-// ─── Iconos SVG inline ────────────────────────────────────────────────────────
+//Iconos SVG inline 
  
 const IconHome = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -49,7 +49,7 @@ const IconLogout = () => (
   </svg>
 );
  
-// ─── Componente Sidebar ───────────────────────────────────────────────────────
+// Componente Sidebar 
  
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();

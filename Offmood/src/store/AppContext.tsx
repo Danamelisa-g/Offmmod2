@@ -30,7 +30,7 @@ type AppAction =
   avatar: 'https://i.pravatar.cc/40?img=3',
 };
 
-// ─── Estado inicial ───────────────────────────────────────────────────────────
+// Estado inicial 
 // Leemos localStorage para persistir entre recargas
  
 const loadFromStorage = (): Partial<AppState> => {
@@ -79,7 +79,7 @@ interface AppContextType {
  
 const AppContext = createContext<AppContextType | undefined>(undefined);
  
-// ─── Provider ─────────────────────────────────────────────────────────────────
+
  
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
@@ -102,8 +102,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   );
 };
  
-// ─── Hook personalizado para usar el contexto ─────────────────────────────────
- 
+//Hook personalizado para usar el contexto 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
  
-// ─── Iconos SVG inline ────────────────────────────────────────────────────────
+// qui estan los iconos en esta parte podemos ver que incluimos css y html 
  
 const IconHome = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -22,13 +22,14 @@ const IconEmoji = () => (
   </svg>
 );
  
-// ─── Componente Navbar ────────────────────────────────────────────────────────
+// Componente Navbar 
+//declaramos que el componenete es funciional y reliazmos una funcion
  
 const Navbar: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();//es un hook de React Router
   const { state, dispatch } = useAppContext();
  
-  // useMemo: la lista de tabs no cambia entre renders
+  
   const tabs = useMemo(() => [
     { id: 'feed',     label: 'Feed',     path: '/feed',     icon: <IconHome />,  isAvatar: false },
     { id: 'emotions', label: 'Emotions', path: '/emotions', icon: <IconEmoji />, isAvatar: false },
