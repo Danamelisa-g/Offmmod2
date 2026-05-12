@@ -25,7 +25,7 @@ export const fakePosts: Post[] = [
     content: "Reflexionando sobre la semana... hay cosas que mejorar pero voy bien.",
     image: null,
     date: "2026-05-11",
-    mood: "neutral"
+    mood: "happy"
   },
   {
     id: 3,
