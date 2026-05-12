@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { fakePosts } from '../data/fakePosts';
+import type { Post } from '../data/fakePosts';
 
 //definen los tipos 
 export interface User {
@@ -13,6 +15,7 @@ interface AppState {
   sidebarOpen: boolean;
   currentUser: User | null;
   isAuthenticated: boolean;
+  posts: Post[];
 }
  
 type AppAction =
@@ -20,10 +23,12 @@ type AppAction =
   | { type: 'TOGGLE_SIDEBAR' }
   | { type: 'SET_SIDEBAR_OPEN'; payload: boolean }
   | { type: 'SET_USER'; payload: User }
-  | { type: 'LOGOUT' };
+  | { type: 'LOGOUT' }
+  | { type: 'ADD_POST'; payload: Post }
+  | { type: 'DELETE_POST'; payload: number };
 
 //datos mockeados
-  const MOCK_USER: User = {
+const MOCK_USER: User = {
   id: '1',
   name: 'Adam Smith',
   email: 'adam@offmood.com',
@@ -49,6 +54,7 @@ const initialState: AppState = {
   sidebarOpen: false, // el sidebar siempre empieza cerrado
   currentUser: MOCK_USER,
   isAuthenticated: true,
+  posts: fakePosts,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -67,6 +73,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
  
     case 'LOGOUT':
       return { ...state, currentUser: null, isAuthenticated: false };
+
+    case 'ADD_POST':
+      return { ...state, posts: [action.payload, ...state.posts] };
+
+    case 'DELETE_POST':
+      return { ...state, posts: state.posts.filter(p => p.id !== action.payload) };
  
     default:
       return state;
