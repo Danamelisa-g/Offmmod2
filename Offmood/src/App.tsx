@@ -4,21 +4,14 @@ import { AppProvider } from './store/AppContext';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import './components/navigation.css';
- 
-//  Importa tus páginas aquí cuando las tengas 
-// import FeedPage from './pages/FeedPage';
-// import EmotionsPage from './pages/EmotionsPage';
-// import ProfilePage from './pages/ProfilePage';
-// import CreatePostPage from './pages/CreatePostPage';
- 
-// Placeholder temporal mientras creas las páginas 
+import SignUpPage from './pages/Signup/SignUpPage';
+
+// Placeholder temporal mientras se crean las páginas 
 const FeedPage = () => <h1 style={{ padding: '24px' }}>Feed</h1>;
 const EmotionsPage = () => <h1 style={{ padding: '24px' }}>Emotion History</h1>;
 const ProfilePage = () => <h1 style={{ padding: '24px' }}>Profile</h1>;
 const CreatePostPage = () => <h1 style={{ padding: '24px' }}>Create Post</h1>;
- 
-//Componente principal 
- 
+
 const App: React.FC = () => {
   return (
     <AppProvider>
@@ -32,6 +25,7 @@ const App: React.FC = () => {
               <Route path="/emotions"    element={<EmotionsPage />} />
               <Route path="/profile"     element={<ProfilePage />} />
               <Route path="/create-post" element={<CreatePostPage />} />
+              <Route path="/signup"      element={<SignUpPage />} />
             </Routes>
           </main>
           <Navbar />
@@ -40,5 +34,5 @@ const App: React.FC = () => {
     </AppProvider>
   );
 };
- 
+
 export default App;
