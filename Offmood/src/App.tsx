@@ -5,12 +5,12 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import './components/navigation.css';
 import SignUpPage from './pages/Signup/SignUpPage';
+import CreatePostPage from './pages/CreatePost/CreatePostPage';
 
 // Placeholder temporal mientras se crean las páginas 
 const FeedPage = () => <h1 style={{ padding: '24px' }}>Feed</h1>;
 const EmotionsPage = () => <h1 style={{ padding: '24px' }}>Emotion History</h1>;
 const ProfilePage = () => <h1 style={{ padding: '24px' }}>Profile</h1>;
-const CreatePostPage = () => <h1 style={{ padding: '24px' }}>Create Post</h1>;
 
 const App: React.FC = () => {
   return (
