@@ -45,7 +45,7 @@ const CreatePostPage: React.FC = () => {
         avatar: state.currentUser?.avatar ?? '',
         content,
         image,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString(),
         mood: mood ?? 'happy',
       },
     });
