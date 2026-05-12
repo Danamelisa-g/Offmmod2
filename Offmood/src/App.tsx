@@ -6,9 +6,9 @@ import Navbar from './components/Navbar';
 import './components/navigation.css';
 import SignUpPage from './pages/Signup/SignUpPage';
 import CreatePostPage from './pages/CreatePost/CreatePostPage';
+import Home from './pages/Home';
 
 // Placeholder temporal mientras se crean las páginas 
-const FeedPage = () => <h1 style={{ padding: '24px' }}>Feed</h1>;
 const EmotionsPage = () => <h1 style={{ padding: '24px' }}>Emotion History</h1>;
 const ProfilePage = () => <h1 style={{ padding: '24px' }}>Profile</h1>;
 
@@ -21,7 +21,7 @@ const App: React.FC = () => {
           <main className="app-main">
             <Routes>
               <Route path="/" element={<Navigate to="/feed" replace />} />
-              <Route path="/feed"        element={<FeedPage />} />
+              <Route path="/feed" element={<Home />} />
               <Route path="/emotions"    element={<EmotionsPage />} />
               <Route path="/profile"     element={<ProfilePage />} />
               <Route path="/create-post" element={<CreatePostPage />} />

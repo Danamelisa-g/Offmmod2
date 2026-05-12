@@ -54,7 +54,7 @@ const initialState: AppState = {
   sidebarOpen: false, // el sidebar siempre empieza cerrado
   currentUser: MOCK_USER,
   isAuthenticated: true,
-  posts: fakePosts,
+  posts: savedState.posts ?? fakePosts,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -103,9 +103,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       JSON.stringify({
         activePath: state.activePath,
         isAuthenticated: state.isAuthenticated,
+        posts: state.posts,
       })
     );
-  }, [state.activePath, state.isAuthenticated]);
+  }, [state.activePath, state.isAuthenticated, state.posts]);
  
   return (
     <AppContext.Provider value={{ state, dispatch }}>
