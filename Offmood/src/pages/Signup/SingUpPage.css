@@ -2,10 +2,11 @@
 
 /* Aqui podran ver la dividion en el diseno par qeu sean 2 paneles */
 .sup-page {
+  width: 100%;
   display: flex;
   min-height: 100vh;
   background-color: #edeae5;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 /*Panel izquierdo es donde va la imagen */
