@@ -10,13 +10,12 @@ const Profile: React.FC = () => {
   const { state } = useAppContext();
   const [activeTab, setActiveTab] = useState<TabId>('posts');
 
-  // Convierte los posts del estado global al formato que espera ProfilePost
   const myPosts: Post[] = state.posts
-    .filter(p => p.user === state.currentUser?.name)
+    .filter(p => p.userId === state.currentUser?.id)
     .map(p => ({
       id: p.id,
-      authorName: p.user,
-      authorAvatar: p.avatar,
+      authorName: state.currentUser?.name ?? p.user,
+      authorAvatar: state.currentUser?.avatar ?? p.avatar,
       timeAgo: p.date,
       content: p.content,
       image: p.image,
@@ -33,13 +32,12 @@ const Profile: React.FC = () => {
       lastComment: null,
     }));
 
-  // Posts likeados desde el feed
   const likedPosts: Post[] = state.posts
     .filter(p => state.likedPostIds.includes(p.id))
     .map(p => ({
       id: p.id,
-      authorName: p.user,
-      authorAvatar: p.avatar,
+      authorName: p.userId === state.currentUser?.id ? (state.currentUser?.name ?? p.user) : p.user,
+      authorAvatar: p.userId === state.currentUser?.id ? (state.currentUser?.avatar ?? p.avatar) : p.avatar,
       timeAgo: p.date,
       content: p.content,
       image: p.image,
@@ -55,12 +53,27 @@ const Profile: React.FC = () => {
       commentsCount: 0,
       lastComment: null,
     }));
+
+  // Stats calculados desde el estado real
+  const myPostsCount = myPosts.length;
+  const myCommentsCount = Object.values(state.postComments)
+    .flat()
+    .filter(c => c.user === state.currentUser?.name).length;
+
+  const profileWithStats = {
+    ...state.profile,
+    stats: {
+      ...state.profile.stats,
+      posts: myPostsCount,
+      comments: myCommentsCount,
+    },
+  };
 
   const posts = activeTab === 'posts' ? myPosts : likedPosts;
 
   return (
     <div className="profile-page">
-      <ProfileHeader profile={state.profile} />
+      <ProfileHeader profile={profileWithStats} />
       <ProfileTabs active={activeTab} onChange={setActiveTab} />
       <div className="profile-feed">
         {posts.length === 0

@@ -62,7 +62,7 @@ const savedState = loadFromStorage();
 const initialState: AppState = {
   activePath: savedState.activePath ?? '/feed',
   sidebarOpen: false,
-  currentUser: MOCK_USER,
+  currentUser: (savedState as AppState).currentUser ?? MOCK_USER,
   isAuthenticated: true,
   posts: savedState.posts ?? fakePosts,
   profile: (savedState as AppState).profile ?? (mockData.profile as ProfileData),
@@ -141,9 +141,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         likedPostIds: state.likedPostIds,
         postLikes: state.postLikes,
         postComments: state.postComments,
+        currentUser: state.currentUser,
       })
     );
-  }, [state.activePath, state.isAuthenticated, state.posts, state.profile, state.likedPostIds, state.postLikes, state.postComments]);
+  }, [state.activePath, state.isAuthenticated, state.posts, state.profile, state.likedPostIds, state.postLikes, state.postComments, state.currentUser]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

@@ -41,6 +41,7 @@ const CreatePostPage: React.FC = () => {
       type: 'ADD_POST',
       payload: {
         id: Date.now(),
+        userId: state.currentUser?.id ?? '1',
         user: state.currentUser?.name ?? 'Usuario',
         avatar: state.currentUser?.avatar ?? '',
         content,

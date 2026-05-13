@@ -1,5 +1,6 @@
 export interface Post {
   id: number;
+  userId: string;
   user: string;
   avatar: string;
   content: string;
@@ -11,6 +12,7 @@ export interface Post {
 export const fakePosts: Post[] = [
   {
     id: 1,
+    userId: 'other',
     user: "Sarah Chen",
     avatar: "https://i.pravatar.cc/40?img=5",
     content: "Finally finished that project I've been working on! I didn't came out the way i wanted, but it's a process, thanks for all the support you guys gave me 💙",
@@ -20,6 +22,7 @@ export const fakePosts: Post[] = [
   },
   {
     id: 2,
+    userId: 'other',
     user: "Alex Rivera",
     avatar: "https://i.pravatar.cc/40?img=8",
     content: "Spent the morning meditating by the lake. I've been going thru a lot of things an changes in mi life lately. Sometimes we need to slow down and just breathe.\n\nTake som time to care of yourselves",
@@ -29,6 +32,7 @@ export const fakePosts: Post[] = [
   },
   {
     id: 3,
+    userId: 'other',
     user: "María Rivas",
     avatar: "https://i.pravatar.cc/40?img=10",
     content: "Sometimes silence speaks louder than words 🌿",
@@ -38,6 +42,7 @@ export const fakePosts: Post[] = [
   },
   {
     id: 4,
+    userId: 'other',
     user: "Carlos M.",
     avatar: "https://i.pravatar.cc/40?img=12",
     content: "Nature really is amazing, is such a shame some people dont care about it",

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../store/AppContext';
 import type { Post } from '../types/profile';
+import '../styles/posts.css';
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
   Anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
@@ -116,11 +117,15 @@ const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
         <input
           type="text"
           placeholder="Write your comment..."
+          maxLength={200}
           value={commentInput}
           onChange={e => setCommentInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') handleComment(); }}
           className="post-input"
         />
+        <span style={{ fontSize: '0.75rem', color: '#bbb', textAlign: 'right' }}>
+          {commentInput.length}/200
+        </span>
       </div>
 
     </article>

@@ -78,6 +78,9 @@ const Home: React.FC = () => {
         const isLiked = state.likedPostIds.includes(post.id);
         const likeCount = state.postLikes[post.id] ?? 0;
         const comments = state.postComments[post.id] ?? [];
+        const isCurrentUser = post.userId === state.currentUser?.id;
+        const displayAvatar = isCurrentUser ? (state.currentUser?.avatar ?? post.avatar) : post.avatar;
+        const displayName = isCurrentUser ? (state.currentUser?.name ?? post.user) : post.user;
 
         return (
           <div key={post.id} className="home-card home-post">
@@ -85,9 +88,9 @@ const Home: React.FC = () => {
             {/* Header */}
             <div className="post-header">
               <div className="post-author">
-                <img src={post.avatar} alt={post.user} className="post-avatar" />
+                <img src={displayAvatar} alt={displayName} className="post-avatar" />
                 <div>
-                  <span className="post-username">{post.user}</span>
+                  <span className="post-username">{displayName}</span>
                   <span className="post-time">{timeAgo(post.date)}</span>
                 </div>
               </div>
@@ -131,11 +134,15 @@ const Home: React.FC = () => {
               <input
                 type="text"
                 placeholder="Write your comment..."
+                maxLength={200}
                 value={commentInputs[post.id] ?? ''}
                 onChange={e => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                 onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }}
                 className="post-input"
               />
+              <span style={{ fontSize: '0.75rem', color: '#bbb', textAlign: 'right' }}>
+                {(commentInputs[post.id] ?? '').length}/200
+              </span>
             </div>
 
           </div>
