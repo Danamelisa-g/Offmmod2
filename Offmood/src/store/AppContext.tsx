@@ -20,6 +20,9 @@ interface AppState {
   isAuthenticated: boolean;
   posts: Post[];
   profile: ProfileData;
+  likedPostIds: number[];
+  postLikes: Record<number, number>;
+  postComments: Record<number, { user: string; text: string }[]>;
 }
 
 // ── Acciones ───────────────────────────────────────────────────
@@ -31,7 +34,10 @@ type AppAction =
   | { type: 'LOGOUT' }
   | { type: 'ADD_POST'; payload: Post }
   | { type: 'DELETE_POST'; payload: number }
-  | { type: 'UPDATE_PROFILE'; payload: Partial<ProfileData> };
+  | { type: 'UPDATE_PROFILE'; payload: Partial<ProfileData> }
+  | { type: 'TOGGLE_LIKE'; payload: number }
+  | { type: 'SET_POST_LIKES'; payload: { id: number; count: number } }
+  | { type: 'SET_POST_COMMENT'; payload: { id: number; comments: { user: string; text: string }[] } };
 
 // ── Mock user de sesión ────────────────────────────────────────
 const MOCK_USER: User = {
@@ -60,6 +66,9 @@ const initialState: AppState = {
   isAuthenticated: true,
   posts: savedState.posts ?? fakePosts,
   profile: (savedState as AppState).profile ?? (mockData.profile as ProfileData),
+  likedPostIds: (savedState as AppState).likedPostIds ?? [],
+  postLikes: (savedState as AppState).postLikes ?? {},
+  postComments: (savedState as AppState).postComments ?? {},
 };
 
 // ── Reducer ────────────────────────────────────────────────────
@@ -91,6 +100,20 @@ function appReducer(state: AppState, action: AppAction): AppState {
             }
           : null,
       };
+      case 'TOGGLE_LIKE': {
+      const isLiked = state.likedPostIds.includes(action.payload);
+      return {
+        ...state,
+        likedPostIds: isLiked
+          ? state.likedPostIds.filter(id => id !== action.payload)
+          : [...state.likedPostIds, action.payload],
+      };
+    }
+    case 'SET_POST_LIKES':
+      return { ...state, postLikes: { ...state.postLikes, [action.payload.id]: action.payload.count } };
+
+    case 'SET_POST_COMMENT':
+      return { ...state, postComments: { ...state.postComments, [action.payload.id]: action.payload.comments } };
     default:
       return state;
   }
@@ -115,9 +138,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isAuthenticated: state.isAuthenticated,
         posts: state.posts,
         profile: state.profile,
+        likedPostIds: state.likedPostIds,
+        postLikes: state.postLikes,
+        postComments: state.postComments,
       })
     );
-  }, [state.activePath, state.isAuthenticated, state.posts, state.profile]);
+  }, [state.activePath, state.isAuthenticated, state.posts, state.profile, state.likedPostIds, state.postLikes, state.postComments]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

@@ -1,6 +1,6 @@
 import { useAppContext } from '../store/AppContext';
 import './Home.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
   anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
@@ -35,41 +35,25 @@ const timeAgo = (dateStr: string) => {
 };
 
 const Home: React.FC = () => {
-  const { state, } = useAppContext();
-  const [comments, setComments] = useState<Record<number, string>>({});
-  const [postComments, setPostComments] = useState<Record<number, { user: string; text: string }[]>>(() => {
-    try {
-      const saved = localStorage.getItem('offmood-comments');
-      return saved ? JSON.parse(saved) : {};
-    } catch { return {}; }
-  });
-  const [likes, setLikes] = useState<Record<number, number>>(() => {
-    try {
-      const saved = localStorage.getItem('offmood-likes');
-      return saved ? JSON.parse(saved) : {};
-    } catch { return {}; }
-  });
-
-  useEffect(() => {
-  localStorage.setItem('offmood-likes', JSON.stringify(likes));
-}, [likes]);
-
-useEffect(() => {
-  localStorage.setItem('offmood-comments', JSON.stringify(postComments));
-}, [postComments]);
+  const { state, dispatch } = useAppContext();
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
 
   const handleLike = (id: number) => {
-    setLikes(prev => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+    const isLiked = state.likedPostIds.includes(id);
+    const current = state.postLikes[id] ?? 0;
+    dispatch({ type: 'TOGGLE_LIKE', payload: id });
+    dispatch({ type: 'SET_POST_LIKES', payload: { id, count: isLiked ? current - 1 : current + 1 } });
   };
 
   const handleComment = (id: number) => {
-    const text = comments[id]?.trim();
+    const text = commentInputs[id]?.trim();
     if (!text) return;
-    setPostComments(prev => ({
-      ...prev,
-      [id]: [...(prev[id] ?? []), { user: state.currentUser?.name ?? 'Usuario', text }],
-    }));
-    setComments(prev => ({ ...prev, [id]: '' }));
+    const existing = state.postComments[id] ?? [];
+    dispatch({
+      type: 'SET_POST_COMMENT',
+      payload: { id, comments: [...existing, { user: state.currentUser?.name ?? 'Usuario', text }] },
+    });
+    setCommentInputs(prev => ({ ...prev, [id]: '' }));
   };
 
   return (
@@ -91,10 +75,14 @@ useEffect(() => {
       {/* Feed de posts */}
       {state.posts.map(post => {
         const mood = moodColors[post.mood] ?? moodColors.happy;
+        const isLiked = state.likedPostIds.includes(post.id);
+        const likeCount = state.postLikes[post.id] ?? 0;
+        const comments = state.postComments[post.id] ?? [];
+
         return (
           <div key={post.id} className="home-card home-post">
 
-            {/* Header del post */}
+            {/* Header */}
             <div className="post-header">
               <div className="post-author">
                 <img src={post.avatar} alt={post.user} className="post-avatar" />
@@ -112,24 +100,28 @@ useEffect(() => {
             {/* Contenido */}
             <p className="post-content">{post.content}</p>
 
-            {/* Imagen si tiene */}
+            {/* Imagen */}
             {post.image && <img src={post.image} alt="post" className="post-image" />}
 
             {/* Acciones */}
             <div className="post-actions">
-              <button className="post-action-btn" onClick={() => handleLike(post.id)}>
-                ♡ {likes[post.id] ?? 0}
+              <button
+                className="post-action-btn"
+                onClick={() => handleLike(post.id)}
+                style={{ color: isLiked ? '#e0345a' : undefined }}
+              >
+                {isLiked ? '♥' : '♡'} {likeCount}
               </button>
               <button className="post-action-btn">
-                ○ {(postComments[post.id] ?? []).length}
+                ○ {comments.length}
               </button>
             </div>
 
-            {/* Comentarios existentes */}
-            {(postComments[post.id] ?? []).map((c, i) => (
+            {/* Comentarios */}
+            {comments.map((c, i) => (
               <div key={i} className="post-comment">
                 <span className="post-comment-user">{c.user}</span>
-                <span className="post-comment-text">{c.text}</span>
+                <span className="post-comment-text"> {c.text}</span>
               </div>
             ))}
 
@@ -139,8 +131,8 @@ useEffect(() => {
               <input
                 type="text"
                 placeholder="Write your comment..."
-                value={comments[post.id] ?? ''}
-                onChange={e => setComments(prev => ({ ...prev, [post.id]: e.target.value }))}
+                value={commentInputs[post.id] ?? ''}
+                onChange={e => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                 onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }}
                 className="post-input"
               />

@@ -353,3 +353,12 @@
 
   .ppost { padding: 14px 16px; border-radius: 12px; }
 }
+
+.profile-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding-bottom: 32px;
+}

@@ -1,102 +1,130 @@
 import React, { useState } from 'react';
+import { useAppContext } from '../store/AppContext';
 import type { Post } from '../types/profile';
- 
-// Define las props que recibe este componente: un solo post
+
+const moodColors: Record<string, { bg: string; border: string; text: string }> = {
+  Anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
+  Angry:     { bg: '#fde8e4', border: '#f47c6a', text: '#c0392b' },
+  Happy:     { bg: '#fef6e0', border: '#f7d06e', text: '#b8860b' },
+  Disgusted: { bg: '#e6f4ea', border: '#6abf8a', text: '#2e7d32' },
+  Sad:       { bg: '#e3f0f8', border: '#7ab3d4', text: '#1565c0' },
+};
+
+const moodImgs: Record<string, string> = {
+  Anxious:   new URL('../assets/Ansioso.png',    import.meta.url).href,
+  Angry:     new URL('../assets/Enojado.png',    import.meta.url).href,
+  Happy:     new URL('../assets/Feliz.png',      import.meta.url).href,
+  Disgusted: new URL('../assets/Disgustado.png', import.meta.url).href,
+  Sad:       new URL('../assets/Triste.png',     import.meta.url).href,
+};
+
+const timeAgo = (dateStr: string) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const h = Math.floor(mins / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+};
+
 interface ProfilePostProps {
   post: Post;
 }
- 
+
 const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
- 
-  // Estado local: si el usuario ya le dio like o no
-  const [liked, setLiked] = useState(false);
-  // Estado local: contador de likes (arranca con el valor que viene del mockData)
-  const [likeCount, setLikeCount] = useState(post.likes);
- 
-  // Alterna el like: si ya tenía like lo quita, si no lo pone
-  // También suma o resta 1 al contador según el estado anterior
-  const toggleLike = () => {
-    setLiked((p) => !p);
-    setLikeCount((p) => (liked ? p - 1 : p + 1));
+  const { state, dispatch } = useAppContext();
+  const [commentInput, setCommentInput] = useState('');
+
+  const isLiked = state.likedPostIds.includes(post.id);
+  const likeCount = state.postLikes[post.id] ?? post.likes;
+  const comments = state.postComments[post.id] ?? (post.lastComment ? [{ user: post.lastComment.author, text: post.lastComment.text }] : []);
+
+  const handleLike = () => {
+    const current = state.postLikes[post.id] ?? post.likes;
+    dispatch({ type: 'TOGGLE_LIKE', payload: post.id });
+    dispatch({ type: 'SET_POST_LIKES', payload: { id: post.id, count: isLiked ? current - 1 : current + 1 } });
   };
- 
+
+  const handleComment = () => {
+    const text = commentInput.trim();
+    if (!text) return;
+    dispatch({
+      type: 'SET_POST_COMMENT',
+      payload: { id: post.id, comments: [...comments, { user: state.currentUser?.name ?? 'Usuario', text }] },
+    });
+    setCommentInput('');
+  };
+
+  const mood = moodColors[post.mood] ?? moodColors.Happy;
+
+  // intenta parsear la fecha, si falla usa el string directo
+  const timeDisplay = (() => {
+    const parsed = new Date(post.timeAgo);
+    return isNaN(parsed.getTime()) ? post.timeAgo : timeAgo(post.timeAgo);
+  })();
+
   return (
-    <article className="ppost">
- 
-      {/* ── Fila superior: avatar del autor + nombre + tiempo + tag de mood ── */}
-      <div className="ppost-header">
- 
-        {/* Lado izquierdo: foto, nombre y hace cuánto se publicó */}
-        <div className="ppost-author">
-          <img src={post.authorAvatar} alt={post.authorName} className="ppost-avatar" />
-          <div className="ppost-meta">
-            <span className="ppost-name">{post.authorName}</span>
-            <span className="ppost-sep">•</span>
-            <span className="ppost-time">{post.timeAgo}</span>
+    <article className="home-card home-post">
+
+      {/* Header */}
+      <div className="post-header">
+        <div className="post-author">
+          <img src={post.authorAvatar} alt={post.authorName} className="post-avatar" />
+          <div>
+            <span className="post-username">{post.authorName}</span>
+            <span className="post-time">{timeDisplay}</span>
           </div>
         </div>
- 
-        {/* Lado derecho: tag que muestra el mood del post
-            - borderColor y color del texto vienen del mockData (moodColor)
-            - cambia de color según la emoción (ej: amarillo para Happy, azul para Sad) */}
-        <div className="ppost-mood" style={{ borderColor: post.moodColor }}>
-          <img src={post.moodImage} alt={post.mood} className="ppost-mood-img" />
-          <span className="ppost-mood-name" style={{ color: post.moodColor }}>
-            {post.mood}
-          </span>
+        <div className="post-mood-badge" style={{ background: mood.bg, borderColor: mood.border, color: mood.text }}>
+          <img src={moodImgs[post.mood] ?? post.moodImage} alt={post.mood} className="post-mood-icon" />
+          <span>{post.mood}</span>
         </div>
       </div>
- 
-      {/* ── Texto del post ── */}
-      <p className="ppost-content">{post.content}</p>
- 
-      {/* ── Imagen del post (opcional) — solo se renderiza si existe en el mockData ── */}
-      {post.image && (
-        <div className="ppost-img-wrap">
-          <img src={post.image} alt="post" className="ppost-img" />
-        </div>
-      )}
- 
-      {/* ── Botones de acción: like y comentarios ── */}
-      <div className="ppost-actions">
- 
-        {/* Botón de like: cambia de color y se rellena cuando liked === true */}
+
+      {/* Contenido */}
+      <p className="post-content">{post.content}</p>
+
+      {/* Imagen */}
+      {post.image && <img src={post.image} alt="post" className="post-image" />}
+
+      {/* Acciones */}
+      <div className="post-actions">
         <button
-          className={`ppost-action ${liked ? 'ppost-action--liked' : ''}`}
-          onClick={toggleLike}
+          className="post-action-btn"
+          onClick={handleLike}
+          style={{ color: isLiked ? '#e0345a' : undefined }}
         >
-          {/* Ícono de corazón: fill cambia entre 'none' y 'currentColor' según el estado */}
-          <svg width="16" height="16" viewBox="0 0 24 24"
-            fill={liked ? 'currentColor' : 'none'}
-            stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-          {likeCount}
+          {isLiked ? '♥' : '♡'} {likeCount}
         </button>
- 
-        {/* Botón de comentarios: solo muestra el conteo, no tiene acción por ahora */}
-        <button className="ppost-action">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-          {post.commentsCount}
+        <button className="post-action-btn">
+          ○ {comments.length}
         </button>
       </div>
- 
-      {/* ── Preview del último comentario (opcional) ──
-          Solo aparece si el post tiene lastComment en el mockData */}
-      {post.lastComment && (
-        <div className="ppost-comment">
-          <span className="ppost-comment-author">{post.lastComment.author}</span>
-          <span className="ppost-comment-text"> {post.lastComment.text}</span>
+
+      {/* Comentarios */}
+      {comments.map((c, i) => (
+        <div key={i} className="post-comment">
+          <span className="post-comment-user">{c.user}</span>
+          <span className="post-comment-text"> {c.text}</span>
         </div>
-      )}
- 
+      ))}
+
+      {/* Input comentario */}
+      <div className="post-comment-input">
+        <img src={state.currentUser?.avatar ?? post.authorAvatar} alt="avatar" className="post-avatar-sm" />
+        <input
+          type="text"
+          placeholder="Write your comment..."
+          value={commentInput}
+          onChange={e => setCommentInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') handleComment(); }}
+          className="post-input"
+        />
+      </div>
+
     </article>
   );
 };
- 
+
 export default ProfilePost;
