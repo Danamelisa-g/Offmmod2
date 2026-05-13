@@ -1,0 +1,223 @@
+/* =============================================================
+   EDIT PROFILE PAGE  —  /profile/edit
+   Depende de las variables de navigation.css
+   ============================================================= */
+
+.ep-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 28px 16px 64px;
+}
+
+.ep-container {
+  max-width: 580px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Back ── */
+.ep-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: fit-content;
+  transition: color var(--transition);
+  font-family: inherit;
+}
+.ep-back:hover { color: var(--color-primary); }
+
+/* ── Heading ── */
+.ep-heading { display: flex; flex-direction: column; gap: 2px; }
+.ep-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+.ep-subtitle { font-size: 0.82rem; color: var(--color-text-muted); margin: 0; }
+
+/* ── Card ── */
+.ep-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ep-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 16px 0;
+}
+
+/* ── Generic field ── */
+.ep-field  { display: flex; flex-direction: column; gap: 8px; }
+.ep-label  { font-size: 0.82rem; font-weight: 600; color: #444; }
+
+/* ── Avatar ── */
+.ep-avatar-row  { display: flex; align-items: center; gap: 18px; }
+.ep-avatar-ring {
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-border);
+  flex-shrink: 0;
+}
+.ep-avatar-img  { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ep-avatar-init {
+  width: 100%; height: 100%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; font-weight: 700;
+}
+.ep-avatar-side { display: flex; flex-direction: column; gap: 7px; }
+.ep-change-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 9px 15px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: background var(--transition), transform 0.15s;
+}
+.ep-change-btn:hover { background: var(--color-primary-dark); transform: translateY(-1px); }
+.ep-avatar-hint { font-size: 0.72rem; color: #bbb; margin: 0; }
+
+/* ── Input ── */
+.ep-input-wrap { position: relative; display: flex; align-items: center; }
+.ep-input-icon {
+  position: absolute; left: 12px; color: #c8c8c8; pointer-events: none;
+}
+.ep-input {
+  width: 100%;
+  padding: 11px 14px 11px 38px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 9px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  background: #fafafa;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color var(--transition), background var(--transition);
+}
+.ep-input:focus { border-color: var(--color-primary); background: #fff; }
+.ep-input::placeholder { color: #ccc; }
+
+/* ── Textarea ── */
+.ep-textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 9px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  background: #fafafa;
+  resize: none;
+  height: 100px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.55;
+  transition: border-color var(--transition), background var(--transition);
+}
+.ep-textarea:focus { border-color: var(--color-primary); background: #fff; }
+.ep-textarea::placeholder { color: #ccc; }
+.ep-char { font-size: 0.72rem; color: #bbb; align-self: flex-end; margin-top: -4px; }
+
+/* ── Privacy section header ── */
+.ep-section-hd {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 4px 0 0;
+}
+.ep-section-title { font-size: 1rem; font-weight: 700; color: var(--color-text); margin: 0; }
+.ep-section-sub   { font-size: 0.82rem; color: var(--color-text-muted); margin: 4px 0 0; }
+
+/* ── Visibility radio cards ── */
+.ep-vis-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.ep-vis-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  background: #fff;
+  transition: border-color var(--transition), background var(--transition);
+}
+.ep-vis-card:hover         { border-color: var(--color-primary); background: #f0f9fd; }
+.ep-vis-card--active       { border-color: var(--color-primary); background: #f0f9fd; }
+.ep-vis-card input[type="radio"] {
+  accent-color: var(--color-primary);
+  width: 16px; height: 16px;
+  flex-shrink: 0; margin: 0;
+}
+.ep-vis-text  { display: flex; flex-direction: column; gap: 2px; }
+.ep-vis-label { font-size: 0.88rem; font-weight: 600; color: var(--color-text); }
+.ep-vis-desc  { font-size: 0.76rem; color: var(--color-text-muted); }
+
+/* ── Action buttons ── */
+.ep-actions { display: flex; gap: 12px; }
+.ep-cancel {
+  flex: 1; padding: 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff; color: #666;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition);
+}
+.ep-cancel:hover { background: #f5f4f1; }
+
+.ep-save {
+  flex: 1; padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary); color: #fff;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition), transform 0.15s;
+}
+.ep-save:hover  { background: var(--color-primary-dark); transform: translateY(-1px); }
+.ep-save:active { transform: scale(0.98); }
+
+/* ── Note ── */
+.ep-note { font-size: 0.75rem; color: #999; margin: 0; line-height: 1.6; }
+.ep-note strong { color: #666; }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ep-page { padding: 20px 12px calc(var(--navbar-height) + 28px); }
+  .ep-title { font-size: 1.2rem; }
+  .ep-avatar-ring { width: 64px; height: 64px; }
+  .ep-avatar-init { font-size: 26px; }
+  .ep-change-btn  { font-size: 0.78rem; padding: 8px 12px; }
+  .ep-actions { flex-direction: column; }
+}

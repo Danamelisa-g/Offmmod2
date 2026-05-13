@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Pacifico&display=swap');
+
+.home-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.home-post {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.post-username {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  display: block;
+}
+
+.post-time {
+  font-size: 0.8rem;
+  color: #aaa;
+  display: block;
+}
+
+.post-mood-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.post-mood-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.post-content {
+  font-size: 0.95rem;
+  color: #2d2d2d;
+  line-height: 1.6;
+  margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.post-action-btn {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #888;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.post-action-btn:hover {
+  color: var(--color-primary);
+}
+
+.post-comment {
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.post-comment-user {
+  font-weight: 700;
+  margin-right: 6px;
+  color: #1a1a1a;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.post-comment-text {
+  color: #555;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.post-comment-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-input {
+  flex: 1;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.post-input:focus {
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 600px) {
+  .home-card { padding: 20px 16px; }
+  .post-mood-badge { font-size: 0.75rem; padding: 4px 8px; }
+}
+

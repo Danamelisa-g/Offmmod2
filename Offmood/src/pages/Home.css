@@ -1,0 +1,70 @@
+@import '../styles/posts.css';
+
+.home-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Mood selector */
+.home-mood-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+}
+
+.home-italic {
+  font-style: italic;
+  font-family: 'Pacifico', cursive;
+  color: var(--color-primary);
+}
+
+.home-moods {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.home-mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  color: #444;
+  transition: all 0.2s;
+}
+
+.home-mood-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.home-mood-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .home-page { padding: 24px 16px; }
+}
+
+@media (max-width: 600px) {
+  .home-page { padding: 16px 10px; }
+  .home-mood-img { width: 36px; height: 36px; }
+  .home-mood-btn { font-size: 0.75rem; }
+}

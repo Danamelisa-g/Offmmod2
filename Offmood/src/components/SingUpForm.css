@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap');
+ 
+/* ── Contenedor principal ─────────────────────────────────────────────────── */
+.suf {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 400px;
+  font-family: 'Nunito', sans-serif;
+}
+ 
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+ 
+.suf__title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+ 
+.suf__subtitle {
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0;
+}
+.suf__subtitle em {
+  font-style: italic;
+  font-weight: 700;
+  color: #555;
+}
+ 
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+ 
+.inputs__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+ 
+.inputs_label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+ 
+
+.suf__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+ 
+.suf__input-wrap:focus-within {
+  border-color: #2dc6e8;
+  box-shadow: 0 0 0 3px rgba(45, 198, 232, 0.15);
+}
+ 
+.suf__input-wrap--error {
+  border-color: #e85252;
+}
+.suf__input-wrap--error:focus-within {
+  box-shadow: 0 0 0 3px rgba(232, 82, 82, 0.15);
+}
+ 
+.suf__input-icon {
+  display: flex;
+  align-items: center;
+  color: #b0b0b0;
+  flex-shrink: 0;
+}
+ 
+.suf__input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+}
+.suf__input::placeholder { color: #c0c0c0; }
+ 
+.suf__hint {
+  font-size: 0.75rem;
+  color: #999;
+}
+ 
+.suf__error {
+  font-size: 0.75rem;
+  color: #e85252;
+}
+.suf__error--terms {
+  padding-left: 28px;
+}
+ 
+/* ── Checkbox de términos ─────────────────────────────────────────────────── */
+.suf__terms {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+ 
+.suf__checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+ 
+/* Ocultamos el checkbox nativo */
+.suf__checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+ 
+/* Checkbox custom */
+.suf__checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d0d0d0;
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+ 
+.suf__checkbox:checked + .suf__checkbox-custom {
+  background: #2dc6e8;
+  border-color: #2dc6e8;
+}
+ 
+.suf__checkbox:checked + .suf__checkbox-custom::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+ 
+.suf__checkbox-text {
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.4;
+}
+.suf__checkbox-text a {
+  color: #2dc6e8;
+  font-weight: 600;
+  text-decoration: none;
+}
+.suf__checkbox-text a:hover { text-decoration: underline; }
+ 
+/* ── Botón Sign Up ────────────────────────────────────────────────────────── */
+.suf__btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: #2dc6e8;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(45, 198, 232, 0.35);
+}
+.suf__btn-primary:hover:not(:disabled) {
+  background: #1ab3d6;
+  transform: translateY(-1px);
+}
+.suf__btn-primary:disabled {
+  background: #a8e8f5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+ 
+/* ── Link login ───────────────────────────────────────────────────────────── */
+.suf__login-hint {
+  text-align: center;
+  font-size: 0.83rem;
+  color: #888;
+  margin: 0;
+}
+ 
+.suf__login-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: inherit;
+  font-weight: 700;
+  color: #2dc6e8;
+}
+.suf__login-link:hover { color: #1ab3d6; text-decoration: underline; }
+ 
+/* ── Divider ──────────────────────────────────────────────────────────────── */
+.suf__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.suf__divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+.suf__divider-text {
+  font-size: 0.8rem;
+  color: #aaa;
+  white-space: nowrap;
+}
+ 
+/* ── Botones sociales ─────────────────────────────────────────────────────── */
+.suf__social {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+ 
+.suf__btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 48px;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.suf__btn-social:hover {
+  border-color: #c0c0c0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}

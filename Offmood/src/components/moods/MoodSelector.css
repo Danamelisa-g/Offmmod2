@@ -1,0 +1,307 @@
+.mood-selector-card {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    padding: 32px 24px;
+
+    background-color: #ffffff;
+
+    border-radius: 24px;
+
+    box-sizing: border-box;
+}
+
+
+.mood-selector-title {
+
+    font-family: 'Lato', sans-serif;
+
+    font-size: 30px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.5px;
+
+    margin: 0 0 28px 0;
+
+    color: #111111;
+
+    text-align: center;
+}
+
+
+.mood-selector-title span {
+
+    font-family: 'Lobster', cursive;
+
+    color: #00B3FC;
+
+    font-style: italic;
+
+    font-weight: 400;
+}
+
+
+.mood-selector-options {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: stretch;
+
+    flex-wrap: wrap;
+
+    gap: 16px;
+}
+
+
+/* Tarjeta individual */
+.mood-selector-button {
+
+    width: 98px;
+
+    height: 109px;
+
+    border-radius: 14px;
+
+    border: 2px solid transparent;
+
+    background-color: transparent;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    outline: none;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        border 0.25s ease,
+        box-shadow 0.25s ease;
+    
+    border: 1px solid #ddd;
+}
+
+
+/* Hover */
+.mood-selector-button:hover {
+
+    border-color: var(--mood-color);
+}
+
+
+/* Estado activo */
+.mood-selector-button.selected {
+
+    border-color: var(--mood-color);
+
+    box-shadow: 0 0 0 1px var(--mood-color);
+}
+
+
+.mood-selector-button img {
+
+    width: 44px;
+
+    height: 44px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
+
+.mood-selector-button p {
+
+    margin: 0;
+
+    font-family: 'Lobster', cursive;
+
+    color: #000000;
+
+    font-size: 14px;
+
+    line-height: 1;
+}
+
+.mood-selector-button:focus:not(.selected),
+.mood-selector-button:active:not(.selected) {
+    outline: none;
+    box-shadow: none;
+}
+
+.mood-selector-button img,
+.mood-selector-button p {
+
+    pointer-events: none;
+}
+
+
+/* ---------------- WEEK HISTORY ---------------- */
+
+.week-history {
+
+    margin-top: 28px;
+}
+
+
+.week-history-divider {
+
+    width: 100%;
+
+    max-width: 560px;
+
+    height: 1px;
+
+    background-color: #d9d6cf;
+
+    margin: 0 auto 24px auto;
+}
+
+
+.week-history-title {
+
+    font-family: 'Lato', sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 400;
+
+    color: #111111;
+
+    text-align: center;
+
+    margin: 0 0 24px 0;
+}
+
+
+.week-history-days {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 18px;
+
+    flex-wrap: wrap;
+}
+
+
+.week-day {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.week-day-circle {
+
+    width: 56px;
+
+    height: 56px;
+
+    border: 1px solid #d9d6cf;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.week-day-circle img {
+
+    width: 34px;
+
+    height: 34px;
+
+    object-fit: contain;
+}
+
+
+.week-day-dot {
+
+    width: 12px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background-color: #a6a6a6;
+}
+
+
+.week-day-label {
+
+    font-family: 'Lato', sans-serif;
+
+    font-size: 14px;
+
+    color: #111111;
+
+    margin: 0;
+
+    text-transform: lowercase;
+}
+
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 768px) {
+
+    .mood-selector-card {
+
+        padding: 24px 16px;
+    }
+
+    .mood-selector-title {
+
+        font-size: 30px;
+
+        text-align: center;
+    }
+
+    .mood-selector-options {
+
+        gap: 12px;
+    }
+
+    .week-history-days {
+
+        gap: 14px;
+    }
+}

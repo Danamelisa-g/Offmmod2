@@ -1,122 +1,155 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
+
+import { AppProvider } from './store/AppContext';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
+import './components/navigation.css';
+import SignUpPage from './pages/Signup/SignUpPage';
+import LoginPage from './pages/Login/LoginPage';
+import CreatePostPage from './pages/CreatePost/CreatePostPage';
+import Home from './pages/Home';
+import Profile from './pages/profile/Profile';
+import EditProfilePage from './pages/profile/EditProfile';
+import EmotionHistoryPage from './pages/EmotionHistory/EmotionHistoryPage';
+
+import { useAppContext } from './store/AppContext';
+
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+
+  // Se obtiene el estado global actual.
+  const { state } = useAppContext();
+
+  // Si no hay sesión iniciada,
+  // se redirige al login.
+  if (!state.isAuthenticated) {
+
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+const AppLayout = () => {
+
+  const location = useLocation();
+
+  // Se definen las rutas que NO deben
+  // mostrar navegación principal.
+  const authPages = [
+    '/login',
+    '/signup',
+  ];
+
+  const isAuthPage =
+    authPages.includes(location.pathname);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+    <div className="app-layout">
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* Sidebar solo aparece fuera de auth */}
+      {!isAuthPage && <Sidebar />}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+      <main className={isAuthPage ? 'app-main-auth' : 'app-main'}>
 
-export default App
+        <Routes>
+
+          <Route
+            path="/"
+            element={<Navigate to="/login" replace />}
+          />
+
+          <Route
+            path="/feed"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/emotions"
+            element={
+              <PrivateRoute>
+                <EmotionHistoryPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/profile/edit"
+            element={
+              <PrivateRoute>
+                <EditProfilePage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/create-post"
+            element={
+              <PrivateRoute>
+                <CreatePostPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/signup"
+            element={<SignUpPage />}
+          />
+
+          <Route
+            path="/login"
+            element={<LoginPage />}
+          />
+
+          <Route
+            path="*"
+            element={<Navigate to="/feed" replace />}
+          />
+
+        </Routes>
+
+      </main>
+
+      {/* Navbar mobile solo fuera de auth */}
+      {!isAuthPage && <Navbar />}
+
+    </div>
+  );
+};
+
+
+const App: React.FC = () => (
+
+  <AppProvider>
+
+    <BrowserRouter>
+
+      <AppLayout />
+
+    </BrowserRouter>
+
+  </AppProvider>
+);
+
+export default App;
