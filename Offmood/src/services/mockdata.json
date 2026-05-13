@@ -1,0 +1,99 @@
+{
+  "profile": {
+    "id": "1",
+    "name": "Adam Smith",
+    "username": "",
+    "email": "adam@offmood.com",
+    "avatar": "https://i.pravatar.cc/150?img=3",
+    "bio": "Sharing my emotional journey and connecting with others. Here to support and be supported.",
+    "stats": {
+      "posts": 16,
+      "comments": 87,
+      "followers": 156
+    },
+    "moodVisibility": "public",
+    "weekMoods": [
+      { "day": "sun", "mood": "Anxious",   "image": "/src/assets/Ansioso.png",    "color": "#FAF7F0" },
+      { "day": "mon", "mood": "Disgusted", "image": "/src/assets/Disgustado.png", "color": "#FAF7F0" },
+      { "day": "tue", "mood": "Happy",     "image": "/src/assets/Feliz.png",      "color": "#FAF7F0" },
+      { "day": "wed", "mood": "Angry",     "image": "/src/assets/Enojado.png",    "color": "#FAF7F0" },
+      { "day": "thu", "mood": "Sad",       "image": "/src/assets/Triste.png",     "color": "#FAF7F0" },
+      { "day": "fri", "mood": "Anxious",   "image": "/src/assets/Ansioso.png",    "color": "#FAF7F0" },
+      { "day": "sat", "mood": null,        "image": null,                          "color": "#FAF7F0" }
+    ]
+  },
+  "posts": [
+    {
+      "id": 1,
+      "authorName": "Adam Smith",
+      "authorAvatar": "https://i.pravatar.cc/40?img=3",
+      "timeAgo": "13h ago",
+      "content": "I dont like Therians",
+      "image": null,
+      "mood": "Disgusted",
+      "moodImage": "/src/assets/Disgustado.png",
+      "moodColor": "#0000",
+      "likes": 24,
+      "commentsCount": 1,
+      "lastComment": { "author": "María Rivas", "text": "Congrats Girl!" }
+    },
+    {
+      "id": 2,
+      "authorName": "Adam Smith",
+      "authorAvatar": "https://i.pravatar.cc/40?img=3",
+      "timeAgo": "2 days ago",
+      "content": "Nature really is amazing, is such a shame some people dont care about it",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80",
+      "mood": "Angry",
+      "moodImage": "/src/assets/Enojado.png",
+      "moodColor": "#fffff",
+      "likes": 18,
+      "commentsCount": 3,
+      "lastComment": null
+    },
+    {
+      "id": 3,
+      "authorName": "Adam Smith",
+      "authorAvatar": "https://i.pravatar.cc/40?img=3",
+      "timeAgo": "3 days ago",
+      "content": "Had a great walk in the park today. Feeling grateful for the little things in life.",
+      "image": null,
+      "mood": "Happy",
+      "moodImage": "/src/assets/Feliz.png",
+      "moodColor": "#fffff",
+      "likes": 42,
+      "commentsCount": 5,
+      "lastComment": { "author": "Carlos M.", "text": "Love this! 🌿" }
+    }
+  ],
+  "likedPosts": [
+    {
+      "id": 10,
+      "authorName": "María Rivas",
+      "authorAvatar": "https://i.pravatar.cc/40?img=5",
+      "timeAgo": "1 day ago",
+      "content": "Sometimes silence speaks louder than words 🌿",
+      "image": null,
+      "mood": "Sad",
+      "moodImage": "/src/assets/Triste.png",
+      "moodColor": "#ffff",
+      "likes": 89,
+      "commentsCount": 12,
+      "lastComment": null
+    },
+    {
+      "id": 11,
+      "authorName": "Luis Torres",
+      "authorAvatar": "https://i.pravatar.cc/40?img=8",
+      "timeAgo": "4 days ago",
+      "content": "Coffee + rain = perfect morning ☕🌧️",
+      "image": null,
+      "mood": "Happy",
+      "moodImage": "/src/assets/Feliz.png",
+      "moodColor": "#ffff",
+      "likes": 134,
+      "commentsCount": 7,
+      "lastComment": { "author": "Sofía P.", "text": "Same!! 🥰" }
+    }
+  ]
+}
