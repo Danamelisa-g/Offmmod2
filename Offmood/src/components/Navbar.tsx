@@ -1,9 +1,14 @@
+//useCallback y useMemo son herramientas de optimización evitan que React rehaga trabajo innecesario.
 import React, { useCallback, useMemo } from 'react';
+//useNavigate es el "GPS" de la app — le dice al navegador a qué página ir.
 import { useNavigate } from 'react-router-dom';
+//ruta de react que es una dependencia 
+//useAppContext es el "cerebro global"segun si se guarda el usuario o esta logueado
+// dice en que pagina estas y todo eso 
 import { useAppContext } from '../store/AppContext';
  
-// qui estan los iconos en esta parte podemos ver que incluimos css y html 
- 
+// aqui van los iconos e incluimos el css y hmtl
+ //este el home 
 const IconHome = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -11,7 +16,7 @@ const IconHome = () => (
     <polyline points="9 22 9 12 15 12 15 22" />
   </svg>
 );
- 
+ //donde va e; icon enoji 
 const IconEmoji = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,7 +34,9 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();//es un hook de React Router
   const { state, dispatch } = useAppContext();
  
-  
+ //useMemoes comouna lista que creamos 1 vez para que no se renderize cada rato 
+ //Cada tab tiene: id (nombre único), path (ruta a la que va), icon (el SVG) e isAvatar (si muestra la foto del usuario).
+ //osea en pocas palabra aqui defini muchacho estructura aqui van las rutas
   const tabs = useMemo(() => [
     { id: 'feed',     label: 'Feed',     path: '/feed',     icon: <IconHome />,  isAvatar: false },
     { id: 'emotions', label: 'Emotions', path: '/emotions', icon: <IconEmoji />, isAvatar: false },
@@ -38,17 +45,17 @@ const Navbar: React.FC = () => {
  
   // useCallback: función estable para manejar clicks
   const handleTabClick = useCallback((path: string) => {
-    dispatch({ type: 'SET_ACTIVE_PATH', payload: path });
+    dispatch({ type: 'SET_ACTIVE_PATH', payload: path });//SET_ACTIVE_PATH le avisa al contexto global "ahora estoy en esta ruta", para que el tab se ilumine de azul
     navigate(path);
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate]);//navegate path cambia la URL del navegador y muestra la página correspondiente.
  
   return (
     <nav className="navbar" aria-label="Navegación principal">
-      {tabs.map((tab) => {
-        const isActive = state.activePath === tab.path;
+      {tabs.map((tab) => {//tabs.map() recorre la lista de 3 tabs y crea un botón por cada uno generando un bucle. 
+        const isActive = state.activePath === tab.path;//sActive compara la ruta guardada en el contexto con la del tab. Si coinciden, agrega la clase navbar__tab--active que lo pone azul.
  
         return (
-          <button
+          <button//key={tab.id}React necesita un identificador único en cada elemento de un map para saber cuál actualizar.
             key={tab.id}
             className={`navbar__tab ${isActive ? 'navbar__tab--active' : ''}`}
             onClick={() => handleTabClick(tab.path)}

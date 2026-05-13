@@ -12,9 +12,7 @@
   --transition: 0.2s ease;
 }
 
-/* ===========================
-   LAYOUT DE LA APP
-   =========================== */
+/* LAYOUT DE LA APP osea estructura de side y nav bar*/
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -36,9 +34,7 @@
   }
 }
 
-/* ===========================
-   SIDEBAR
-   =========================== */
+/*SIDEBAR dieseno de la side bar*/
 .sidebar {
   position: fixed;
   top: 0;
@@ -80,7 +76,7 @@
   }
 }
 
-/* Logo — tamaño fijo pequeño para no romper el layout */
+/* Logo  tamaño fijo pequeño para no romper el layout */
 .sidebar__logo {
   display: flex;
   align-items: center;
@@ -170,7 +166,7 @@
   transform: scale(0.98);
 }
 
-/* Empuja el footer al fondo — con min-height 0 para que flex funcione bien */
+/* Empuja el footer al fondo con min-height 0 para que flex funcione bien */
 .sidebar__spacer {
   flex: 1;
   min-height: 0;
@@ -225,9 +221,7 @@
   color: #d93025;
 }
 
-/* ===========================
-   NAVBAR (solo en móvil)
-   =========================== */
+/* NAVBAR responsive*/
 .navbar {
   display: none;
 }

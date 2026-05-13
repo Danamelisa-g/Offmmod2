@@ -1,0 +1,355 @@
+/* =============================================================
+   PROFILE PAGE  —  /profile
+   Depende de las variables de navigation.css
+   ============================================================= */
+
+.profile-page {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 48px;
+}
+
+/* ───────────────────────────────────────────
+   PROFILE HEADER CARD  (componente azul)
+─────────────────────────────────────────── */
+.ph-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Top row */
+.ph-top {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.ph-avatar-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-border);
+  flex-shrink: 0;
+}
+.ph-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ph-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ph-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ph-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Edit Profile button */
+.ph-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--transition), transform 0.15s;
+}
+.ph-edit-btn:hover  { background: var(--color-primary-dark); transform: translateY(-1px); }
+.ph-edit-btn:active { transform: scale(0.97); }
+
+.ph-bio {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Stats */
+.ph-stats {
+  display: flex;
+  gap: 28px;
+}
+.ph-stat {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.ph-stat-num {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.ph-stat-lbl {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+/* Weekly moods */
+.ph-moods {
+  border-top: 1px solid var(--color-border);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.ph-moods-label {
+  font-size: 0.88rem;
+  color: #555;
+  margin: 0;
+  align-self: flex-start;
+}
+.ph-moods-accent {
+  color: var(--color-primary);
+  font-style: italic;
+  font-weight: 600;
+}
+.ph-moods-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ph-mood-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.ph-mood-bubble {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.ph-mood-bubble:hover { transform: scale(1.1); }
+.ph-mood-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+.ph-mood-empty {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c8c8c8;
+  display: block;
+}
+.ph-mood-day {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+}
+.ph-moods-hint {
+  font-size: 0.72rem;
+  color: #bbb;
+  margin: 0;
+}
+
+/* ───────────────────────────────────────────
+   TABS  (componente rosa)
+─────────────────────────────────────────── */
+.ptabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-border);
+}
+.ptabs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 20px;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color var(--transition), border-color var(--transition);
+}
+.ptabs-btn:hover { color: var(--color-primary); }
+.ptabs-btn--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* ───────────────────────────────────────────
+   FEED
+─────────────────────────────────────────── */
+.profile-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ───────────────────────────────────────────
+   POST CARD  (componente naranja/rojo)
+─────────────────────────────────────────── */
+.ppost {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: box-shadow var(--transition);
+}
+.ppost:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+.ppost-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ppost-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.ppost-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+}
+.ppost-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+.ppost-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.ppost-sep  { color: #d0d0d0; font-size: 0.85rem; }
+.ppost-time { font-size: 0.8rem; color: var(--color-text-muted); white-space: nowrap; }
+
+/* Mood tag */
+.ppost-mood {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 2px solid;
+  background: #fff;
+  flex-shrink: 0;
+}
+.ppost-mood-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+.ppost-mood-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.ppost-content {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Post image */
+.ppost-img-wrap { border-radius: 10px; overflow: hidden; }
+.ppost-img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Actions */
+.ppost-actions { display: flex; gap: 18px; }
+.ppost-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition);
+}
+.ppost-action:hover       { color: var(--color-primary); }
+.ppost-action--liked      { color: #f43f5e; }
+.ppost-action--liked:hover{ color: #e11d48; }
+
+/* Last comment */
+.ppost-comment {
+  font-size: 0.82rem;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+.ppost-comment-author { font-weight: 700; color: var(--color-text); }
+.ppost-comment-text   { color: #666; }
+
+/* ───────────────────────────────────────────
+   RESPONSIVE
+─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .profile-page { padding-bottom: calc(var(--navbar-height) + 24px); }
+
+  .ph-card  { padding: 16px; border-radius: 12px; }
+  .ph-top   { gap: 14px; }
+  .ph-avatar-wrap { width: 72px; height: 72px; }
+  .ph-name  { font-size: 1.2rem; }
+  .ph-edit-label { display: none; }           /* solo icono en móvil */
+  .ph-edit-btn   { padding: 8px 10px; }
+  .ph-mood-bubble { width: 44px; height: 44px; }
+  .ph-mood-img    { width: 26px; height: 26px; }
+
+  .ppost { padding: 14px 16px; border-radius: 12px; }
+}

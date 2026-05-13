@@ -1,23 +1,28 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { fakePosts } from '../data/fakePosts';
 import type { Post } from '../data/fakePosts';
+import type { ProfileData } from '../types/profile';
+import mockData from '../services/mockData.json';
 
-//definen los tipos 
+// ── Tipos base del usuario de sesión ──────────────────────────
 export interface User {
   id: string;
   name: string;
   email: string;
   avatar: string;
 }
- 
+
+// ── Estado global ──────────────────────────────────────────────
 interface AppState {
   activePath: string;
   sidebarOpen: boolean;
   currentUser: User | null;
   isAuthenticated: boolean;
   posts: Post[];
+  profile: ProfileData;
 }
- 
+
+// ── Acciones ───────────────────────────────────────────────────
 type AppAction =
   | { type: 'SET_ACTIVE_PATH'; payload: string }
   | { type: 'TOGGLE_SIDEBAR' }
@@ -25,9 +30,10 @@ type AppAction =
   | { type: 'SET_USER'; payload: User }
   | { type: 'LOGOUT' }
   | { type: 'ADD_POST'; payload: Post }
-  | { type: 'DELETE_POST'; payload: number };
+  | { type: 'DELETE_POST'; payload: number }
+  | { type: 'UPDATE_PROFILE'; payload: Partial<ProfileData> };
 
-//datos mockeados
+// ── Mock user de sesión ────────────────────────────────────────
 const MOCK_USER: User = {
   id: '1',
   name: 'Adam Smith',
@@ -35,9 +41,7 @@ const MOCK_USER: User = {
   avatar: 'https://i.pravatar.cc/40?img=3',
 };
 
-// Estado inicial 
-// Leemos localStorage para persistir entre recargas
- 
+// ── Persistencia ───────────────────────────────────────────────
 const loadFromStorage = (): Partial<AppState> => {
   try {
     const saved = localStorage.getItem('offmood-state');
@@ -46,57 +50,63 @@ const loadFromStorage = (): Partial<AppState> => {
     return {};
   }
 };
- 
+
 const savedState = loadFromStorage();
- 
+
 const initialState: AppState = {
   activePath: savedState.activePath ?? '/feed',
-  sidebarOpen: false, // el sidebar siempre empieza cerrado
+  sidebarOpen: false,
   currentUser: MOCK_USER,
   isAuthenticated: true,
   posts: savedState.posts ?? fakePosts,
+  profile: (savedState as AppState).profile ?? (mockData.profile as ProfileData),
 };
 
+// ── Reducer ────────────────────────────────────────────────────
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_ACTIVE_PATH':
       return { ...state, activePath: action.payload };
- 
     case 'TOGGLE_SIDEBAR':
       return { ...state, sidebarOpen: !state.sidebarOpen };
- 
     case 'SET_SIDEBAR_OPEN':
       return { ...state, sidebarOpen: action.payload };
- 
     case 'SET_USER':
       return { ...state, currentUser: action.payload, isAuthenticated: true };
- 
     case 'LOGOUT':
       return { ...state, currentUser: null, isAuthenticated: false };
-
     case 'ADD_POST':
       return { ...state, posts: [action.payload, ...state.posts] };
-
     case 'DELETE_POST':
       return { ...state, posts: state.posts.filter(p => p.id !== action.payload) };
- 
+    case 'UPDATE_PROFILE':
+      return {
+        ...state,
+        profile: { ...state.profile, ...action.payload },
+        currentUser: state.currentUser
+          ? {
+              ...state.currentUser,
+              name: action.payload.name ?? state.currentUser.name,
+              avatar: action.payload.avatar ?? state.currentUser.avatar,
+            }
+          : null,
+      };
     default:
       return state;
   }
 }
+
+// ── Contexto ───────────────────────────────────────────────────
 interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
 }
- 
-const AppContext = createContext<AppContextType | undefined>(undefined);
- 
 
- 
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
- 
-  // Persistir en localStorage cada vez que el estado cambia
+
   useEffect(() => {
     localStorage.setItem(
       'offmood-state',
@@ -104,23 +114,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activePath: state.activePath,
         isAuthenticated: state.isAuthenticated,
         posts: state.posts,
+        profile: state.profile,
       })
     );
-  }, [state.activePath, state.isAuthenticated, state.posts]);
- 
+  }, [state.activePath, state.isAuthenticated, state.posts, state.profile]);
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}
     </AppContext.Provider>
   );
 };
- 
-//Hook personalizado para usar el contexto 
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useAppContext debe usarse dentro de <AppProvider>');
-  }
+  if (!context) throw new Error('useAppContext debe usarse dentro de <AppProvider>');
   return context;
 };

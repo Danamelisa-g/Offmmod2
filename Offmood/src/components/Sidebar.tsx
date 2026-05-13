@@ -1,18 +1,15 @@
 import React, { useCallback, useMemo, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
-import logo from "../assets/Frame 20.png";
- 
-//tipos para navegacion 
+import logo from '../assets/Frame 20.png';
+
 interface NavItem {
   id: string;
   label: string;
   path: string;
   icon: JSX.Element;
 }
- 
-//Iconos SVG inline 
- 
+
 const IconHome = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,7 +17,7 @@ const IconHome = () => (
     <polyline points="9 22 9 12 15 12 15 22" />
   </svg>
 );
- 
+
 const IconEmoji = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -30,7 +27,7 @@ const IconEmoji = () => (
     <line x1="15" y1="9" x2="15.01" y2="9" />
   </svg>
 );
- 
+
 const IconPlus = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -39,7 +36,7 @@ const IconPlus = () => (
     <line x1="8" y1="12" x2="16" y2="12" />
   </svg>
 );
- 
+
 const IconLogout = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,38 +45,44 @@ const IconLogout = () => (
     <line x1="21" y1="12" x2="9" y2="12" />
   </svg>
 );
- 
-// Componente Sidebar 
- 
+
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useAppContext();
- 
+
   const navItems: NavItem[] = useMemo(() => [
     { id: 'feed',     label: 'Feed',            path: '/feed',     icon: <IconHome /> },
     { id: 'emotions', label: 'Emotion History', path: '/emotions', icon: <IconEmoji /> },
   ], []);
- 
+
   const handleNavClick = useCallback((path: string) => {
     dispatch({ type: 'SET_ACTIVE_PATH', payload: path });
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: false });
     navigate(path);
   }, [dispatch, navigate]);
- 
+
   const handleCreatePost = useCallback(() => {
     dispatch({ type: 'SET_ACTIVE_PATH', payload: '/create-post' });
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: false });
     navigate('/create-post');
   }, [dispatch, navigate]);
- 
+
+  /* navegar al perfil al hacer click en el usuario*/
+  const handleProfileClick = useCallback(() => {
+    dispatch({ type: 'SET_ACTIVE_PATH', payload: '/profile' });
+    dispatch({ type: 'SET_SIDEBAR_OPEN', payload: false });
+    navigate('/profile');
+  }, [dispatch, navigate]);
+
   const handleLogout = useCallback(() => {
     dispatch({ type: 'LOGOUT' });
     navigate('/login');
   }, [dispatch, navigate]);
- 
+
+  const isProfileActive = state.activePath === '/profile' || state.activePath === '/profile/edit';
+
   return (
     <>
-      {/* Overlay para cerrar el sidebar en móvil */}
       {state.sidebarOpen && (
         <div
           className="sidebar-overlay"
@@ -87,15 +90,15 @@ const Sidebar: React.FC = () => {
           aria-hidden="true"
         />
       )}
- 
+
       <aside className={`sidebar ${state.sidebarOpen ? 'sidebar--open' : ''}`}>
- 
-        {/* Logo — tamaño controlado para no romper el layout */}
+
+        {/* Logo */}
         <div className="sidebar__logo">
           <img src={logo} alt="Offmood Logo" className="sidebar__logo-img" />
         </div>
- 
-        {/* Navegación */}
+
+        {/* Nav links */}
         <nav className="sidebar__nav">
           {navItems.map((item) => {
             const isActive = state.activePath === item.path;
@@ -112,36 +115,43 @@ const Sidebar: React.FC = () => {
             );
           })}
         </nav>
- 
-        {/* Botón Create Post */}
+
+        {/* Create Post */}
         <button className="sidebar__create-btn" onClick={handleCreatePost}>
           <IconPlus />
           <span>Create Post</span>
         </button>
- 
+
         <div className="sidebar__spacer" />
- 
-        {/* Usuario y Logout — siempre visibles al fondo */}
+
+        {/* Footer: usuario clickeable → /profile + logout */}
         <div className="sidebar__footer">
           {state.currentUser && (
-            <div className="sidebar__user">
+            <button
+              className={`sidebar__user sidebar__user--btn ${isProfileActive ? 'sidebar__user--active' : ''}`}
+              onClick={handleProfileClick}
+              title="Ver perfil"
+            >
+              {/* Barra azul activa */}
+              {isProfileActive && <span className="sidebar__user-indicator" />}
               <img
                 src={state.currentUser.avatar}
                 alt={state.currentUser.name}
                 className="sidebar__user-avatar"
               />
               <span className="sidebar__user-name">{state.currentUser.name}</span>
-            </div>
+            </button>
           )}
+
           <button className="sidebar__logout-btn" onClick={handleLogout}>
             <IconLogout />
             <span>Log out</span>
           </button>
         </div>
- 
+
       </aside>
     </>
   );
 };
- 
+
 export default Sidebar;
