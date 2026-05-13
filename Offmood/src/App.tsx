@@ -9,13 +9,7 @@ import CreatePostPage from './pages/CreatePost/CreatePostPage';
 import Home from './pages/Home';
 import Profile from './pages/profile/Profile';
 import EditProfilePage from './pages/profile/EditProfile';
-
-const EmotionsPage = () => (
-  <div style={{ padding: '32px' }}>
-    <h2 style={{ color: '#2d2d2d' }}>Emotion History</h2>
-    <p style={{ color: '#8a8a8a' }}>Aquí irá el historial de emociones.</p>
-  </div>
-);
+import EmotionHistoryPage from './pages/EmotionHistory/EmotionHistoryPage';
 
 const App: React.FC = () => (
   <AppProvider>
@@ -26,7 +20,7 @@ const App: React.FC = () => (
           <Routes>
             <Route path="/"             element={<Navigate to="/feed" replace />} />
             <Route path="/feed"         element={<Home />} />
-            <Route path="/emotions"     element={<EmotionsPage />} />
+            <Route path="/emotions"     element={<EmotionHistoryPage />} />
             <Route path="/profile"      element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/create-post"  element={<CreatePostPage />} />
