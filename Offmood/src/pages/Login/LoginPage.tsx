@@ -95,12 +95,30 @@ const LoginPage: React.FC = () => {
             return;
         }
 
+        const registeredUser = localStorage.getItem('registeredUser');
+
+        
+
+        if (!registeredUser) {
+            setErrors({
+                username: 'You need to create an account first.',
+            });
+            return;
+        }
+
+        if (form.username.trim() !== registeredUser) {
+            setErrors({
+                username: 'This user is not registered.',
+            });
+            return;
+        }
+
         dispatch({
             type: 'SET_USER',
             payload: {
                 id: '1',
-                name: form.username,
-                email: form.username.includes('@') ? form.username : 'user@offmood.com',
+                name: registeredUser,
+                email: registeredUser.includes('@') ? registeredUser : 'user@offmood.com',
                 avatar: 'https://i.pravatar.cc/40?img=3',
             },
         });
