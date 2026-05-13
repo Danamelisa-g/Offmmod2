@@ -81,6 +81,8 @@ const Sidebar: React.FC = () => {
 
   const isProfileActive = state.activePath === '/profile' || state.activePath === '/profile/edit';
 
+  
+
   return (
     <>
       {state.sidebarOpen && (

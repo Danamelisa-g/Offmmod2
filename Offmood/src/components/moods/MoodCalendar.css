@@ -1,0 +1,159 @@
+.mood-calendar-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    max-width: 630px;
+
+    margin: 0 auto;
+
+    padding: 32px 20px;
+
+    background-color: #FAF7F0;
+
+    border-radius: 24px;
+
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+}
+
+.mood-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.mood-calendar-header h2 {
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: #111111;
+    margin: 0;
+}
+
+.mood-calendar-actions {
+    display: flex;
+    gap: 18px;
+}
+
+.mood-calendar-actions button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    color: #111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 24px;
+}
+
+.mood-calendar-weekdays span {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: #111111;
+    text-align: center;
+    text-transform: lowercase;
+}
+
+.mood-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 28px;
+}
+
+.mood-calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.mood-calendar-circle {
+    width: 48px;
+    height: 48px;
+    border: 1px solid #e1ded8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-calendar-circle img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+
+.mood-calendar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #9f9f9f;
+}
+
+.mood-calendar-day p {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: #111111;
+}
+
+.mood-calendar-day.outside-month {
+    opacity: 0.75;
+}
+
+@media (max-width: 768px) {
+
+    .emotion-history-header {
+
+        padding: 0 4px;
+    }
+
+    .emotion-history-main-title h1 {
+
+        font-size: 28px;
+    }
+
+    .emotion-history-texts h2 {
+
+        font-size: 16px;
+    }
+
+    .emotion-history-texts p {
+
+        font-size: 14px;
+    }
+
+    .mood-calendar-header h2 {
+
+        font-size: 20px;
+    }
+
+    .mood-calendar-grid {
+
+        row-gap: 20px;
+    }
+
+    .mood-calendar-circle {
+
+        width: 42px;
+
+        height: 42px;
+    }
+
+    .mood-calendar-circle img {
+
+        width: 28px;
+
+        height: 28px;
+    }
+}

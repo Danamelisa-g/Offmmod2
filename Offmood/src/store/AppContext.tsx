@@ -3,6 +3,7 @@ import { fakePosts } from '../data/fakePosts';
 import type { Post } from '../data/fakePosts';
 import type { ProfileData } from '../types/profile';
 import mockData from '../services/mockData.json';
+import type { MoodKey } from '../data/moods';
 
 // ── Tipos base del usuario de sesión ──────────────────────────
 export interface User {
@@ -23,6 +24,8 @@ interface AppState {
   likedPostIds: number[];
   postLikes: Record<number, number>;
   postComments: Record<number, { user: string; text: string }[]>;
+  // Aquí se guardan las emociones diarias. Ejemplo: "2026-05-13": "happy"
+  dailyMoods: Record<string, MoodKey>;
 }
 
 // ── Acciones ───────────────────────────────────────────────────
@@ -37,8 +40,15 @@ type AppAction =
   | { type: 'UPDATE_PROFILE'; payload: Partial<ProfileData> }
   | { type: 'TOGGLE_LIKE'; payload: number }
   | { type: 'SET_POST_LIKES'; payload: { id: number; count: number } }
-  | { type: 'SET_POST_COMMENT'; payload: { id: number; comments: { user: string; text: string }[] } };
-
+  | { type: 'SET_POST_COMMENT'; payload: { id: number; comments: { user: string; text: string }[] } }
+  // guardar emoción del día
+  | {
+    type: 'SET_DAILY_MOOD';
+    payload: {
+      date: string;
+      mood: MoodKey;
+    };
+  };
 // ── Mock user de sesión ────────────────────────────────────────
 const MOCK_USER: User = {
   id: '1',
@@ -69,6 +79,9 @@ const initialState: AppState = {
   likedPostIds: (savedState as AppState).likedPostIds ?? [],
   postLikes: (savedState as AppState).postLikes ?? {},
   postComments: (savedState as AppState).postComments ?? {},
+  // Recuperamos moods guardados en localStorage.
+  // Si no existen, dejamos un objeto vacío.
+  dailyMoods: (savedState as AppState).dailyMoods ?? {},
 };
 
 // ── Reducer ────────────────────────────────────────────────────
@@ -94,13 +107,13 @@ function appReducer(state: AppState, action: AppAction): AppState {
         profile: { ...state.profile, ...action.payload },
         currentUser: state.currentUser
           ? {
-              ...state.currentUser,
-              name: action.payload.name ?? state.currentUser.name,
-              avatar: action.payload.avatar ?? state.currentUser.avatar,
-            }
+            ...state.currentUser,
+            name: action.payload.name ?? state.currentUser.name,
+            avatar: action.payload.avatar ?? state.currentUser.avatar,
+          }
           : null,
       };
-      case 'TOGGLE_LIKE': {
+    case 'TOGGLE_LIKE': {
       const isLiked = state.likedPostIds.includes(action.payload);
       return {
         ...state,
@@ -114,6 +127,19 @@ function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_POST_COMMENT':
       return { ...state, postComments: { ...state.postComments, [action.payload.id]: action.payload.comments } };
+
+    // Guardar emoción diaria
+    case 'SET_DAILY_MOOD':
+      return {
+        
+        // mantenemos el resto del estado y actualizamos los moods
+        ...state,dailyMoods: {
+
+        // mantenemos moods anteriores
+          ...state.dailyMoods,
+
+          // guardamos la emoción nueva
+          [action.payload.date]: action.payload.mood,}, };
     default:
       return state;
   }
@@ -142,9 +168,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         postLikes: state.postLikes,
         postComments: state.postComments,
         currentUser: state.currentUser,
+        dailyMoods: state.dailyMoods,
       })
     );
-  }, [state.activePath, state.isAuthenticated, state.posts, state.profile, state.likedPostIds, state.postLikes, state.postComments, state.currentUser]);
+  }, [state.activePath, state.isAuthenticated, state.posts, state.profile, state.likedPostIds, state.postLikes, state.postComments, state.currentUser, state.dailyMoods,]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
