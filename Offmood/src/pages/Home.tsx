@@ -1,6 +1,7 @@
 import { useAppContext } from '../store/AppContext';
 import './Home.css';
 import React, { useState } from 'react';
+import MoodSelector from '../components/moods/MoodSelector';
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
   anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
@@ -59,18 +60,7 @@ const Home: React.FC = () => {
   return (
     <div className="home-page">
 
-      {/* Mood selector */}
-      <div className="home-card">
-        <h3 className="home-mood-title">How are you <span className="home-italic">feeling</span> today?</h3>
-        <div className="home-moods">
-          {allMoods.map(m => (
-            <button key={m} className="home-mood-btn">
-              <img src={moodImgs[m]} alt={moodLabels[m]} className="home-mood-img" />
-              <span>{moodLabels[m]}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+    <MoodSelector />
 
       {/* Feed de posts */}
       {state.posts.map(post => {
