@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store/index';
+import type { AppDispatch } from '../../store/index';
 import { createPost } from '../../store/slices/postsSlice';
 import './CreatePost.css';
 

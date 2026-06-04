@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store/index';
+import type { AppDispatch, RootState } from '../store/index';
 import { fetchPosts } from '../store/slices/postsSlice';
 import { fetchCommentsByPost, createComment } from '../store/slices/commentsSlice';
 import './Home.css';
