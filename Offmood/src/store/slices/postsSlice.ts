@@ -8,6 +8,10 @@ interface Post {
   content: string;
   image_url: string | null;
   mood: string | null;
+  profiles?: {
+    username: string;
+    avatar_url: string | null;
+  };
 }
 
 interface PostsState {
@@ -23,7 +27,9 @@ const initialState: PostsState = {
 };
 
 export const fetchPosts = createAsyncThunk('posts/fetchAll', async () => {
-  const response = await supabaseClient.get('posts?order=created_at.desc');
+  const response = await supabaseClient.get(
+    'posts?select=*,profiles(username,avatar_url)&order=created_at.desc'
+  );
   return response.data;
 });
 

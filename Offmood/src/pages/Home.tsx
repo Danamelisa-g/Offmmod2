@@ -100,7 +100,7 @@ const Home: React.FC = () => {
             <div className="post-header">
               <div className="post-author">
                 <div>
-                  <span className="post-username">{post.user_id}</span>
+                  <span className="post-username">{post.profiles?.username ?? post.user_id}</span>
                   <span className="post-time">{timeAgo(post.created_at)}</span>
                 </div>
               </div>
