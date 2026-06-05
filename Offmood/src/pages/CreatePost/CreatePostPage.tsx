@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store/index';
 import { createPost } from '../../store/slices/postsSlice';
+import { useAppContext } from '../../store/AppContext';
 import './CreatePost.css';
 
 const moods = [
@@ -24,6 +25,8 @@ const moodColors: Record<string, string> = {
 const CreatePostPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { state: appState } = useAppContext();
+  const currentUserId = appState.currentUser?.id ?? '';
 
   const [content, setContent] = useState('');
   const [mood, setMood] = useState<string | null>(null);
@@ -40,7 +43,7 @@ const CreatePostPage: React.FC = () => {
   const handleSubmit = async () => {
     if (!content.trim()) return;
     await dispatch(createPost({
-      user_id: 'temp-user-id', // se reemplaza cuando Urbina conecte auth
+      user_id: currentUserId,
       content,
       image_url: image,
       mood: mood ?? 'happy',

@@ -5,6 +5,7 @@ import { fetchPosts } from '../store/slices/postsSlice';
 import { fetchCommentsByPost, createComment } from '../store/slices/commentsSlice';
 import './Home.css';
 import MoodSelector from '../components/moods/MoodSelector';
+import { useAppContext } from '../store/AppContext';
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
   anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
@@ -40,6 +41,8 @@ const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { posts, loading } = useSelector((state: RootState) => state.posts);
   const { comments } = useSelector((state: RootState) => state.comments);
+  const { state: appState } = useAppContext();
+  const currentUserId = appState.currentUser?.id ?? '';
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
   const [localLikes, setLocalLikes] = useState<Record<string, number>>({});
@@ -67,7 +70,7 @@ const Home: React.FC = () => {
     if (!text) return;
     await dispatch(createComment({
       post_id: postId,
-      user_id: 'temp-user-id', // se reemplaza cuando Urbina conecte auth
+      user_id: currentUserId,
       content: text,
     }));
     setCommentInputs(prev => ({ ...prev, [postId]: '' }));
