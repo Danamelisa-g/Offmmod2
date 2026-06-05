@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
 import './LoginPage.css';
+import { supabase } from '../../supabaseClient/supabaseprincipal';
 
 import logoImg from '../../assets/Logo.png';
 
@@ -85,45 +86,43 @@ const LoginPage: React.FC = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
+    const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        const formErrors = validateForm();
+    const formErrors = validateForm();
 
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            return;
-        }
+    if (Object.keys(formErrors).length > 0) {
+        setErrors(formErrors);
+        return;
+    }
 
-        const registeredUser = localStorage.getItem('registeredUser');
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: form.username,
+        password: form.password,
+    });
 
-        
+    if (error) {
+        setErrors({ username: 'Email or password incorrect.' });
+        return;
+    }
 
-        if (!registeredUser) {
-            setErrors({
-                username: 'You need to create an account first.',
-            });
-            return;
-        }
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, avatar_url')
+        .eq('id', data.user.id)
+        .single();
 
-        if (form.username.trim() !== registeredUser) {
-            setErrors({
-                username: 'This user is not registered.',
-            });
-            return;
-        }
+    dispatch({
+        type: 'SET_USER',
+        payload: {
+            id: data.user.id,
+            name: profile?.username ?? form.username,
+            email: data.user.email ?? '',
+            avatar: profile?.avatar_url ?? 'https://i.pravatar.cc/40?img=3',
+        },
+    });
 
-        dispatch({
-            type: 'SET_USER',
-            payload: {
-                id: '1',
-                name: registeredUser,
-                email: registeredUser.includes('@') ? registeredUser : 'user@offmood.com',
-                avatar: 'https://i.pravatar.cc/40?img=3',
-            },
-        });
-
-        navigate('/feed');
+    navigate('/feed');
     };
 
     return (
