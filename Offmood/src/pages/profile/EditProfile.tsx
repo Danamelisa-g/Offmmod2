@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
 import type { ProfileData } from '../../types/profile';
 import './editProfile.css';
+import { supabase } from '../../supabaseClient/supabaseprincipal';
 
 /* 
    SUB-COMPONENTE: AvatarSection
@@ -18,13 +19,28 @@ interface AvatarSectionProps {
 const AvatarSection: React.FC<AvatarSectionProps> = ({ avatar, name, onChange }) => {
   const ref = useRef<HTMLInputElement>(null);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target?.result as string);
-    reader.readAsDataURL(file);
-  };
+   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = `avatar-${Date.now()}.${fileExt}`;
+
+  const { data, error } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, file, { upsert: true });
+
+  if (error) {
+    console.error('Error uploading avatar:', error.message);
+    return;
+  }
+
+  const { data: urlData } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(data.path);
+
+  onChange(urlData.publicUrl);
+};
 
   return (
     <div className="ep-field">
@@ -116,11 +132,20 @@ const EditProfilePage: React.FC = () => {
   const [visibility, setVisibility] = useState<Visibility>(profile.moodVisibility ?? 'public');
 
   // guarda los cambios en el store global y vuelve al perfil
-  const handleSave = () => {
-    const updated: Partial<ProfileData> = { avatar, name, bio, moodVisibility: visibility };
-    dispatch({ type: 'UPDATE_PROFILE', payload: updated });
-    navigate('/profile');
-  };
+  const handleSave = async () => {
+  const updated: Partial<ProfileData> = { avatar, name, bio, moodVisibility: visibility };
+  dispatch({ type: 'UPDATE_PROFILE', payload: updated });
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await supabase.from('profiles').update({
+      username: name,
+      avatar_url: avatar,
+    }).eq('id', user.id);
+  }
+
+  navigate('/profile');
+};
 
   const handleCancel = () => navigate('/profile');
 

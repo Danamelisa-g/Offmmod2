@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../store/index';
+import { fetchPosts } from '../../store/slices/postsSlice';
+import { fetchAllLikes, fetchUserLikes } from '../../store/slices/likesSlice';
+import { fetchFollowing } from '../../store/slices/followersSlice';
 import './LoginPage.css';
-
+import { supabase } from '../../supabaseClient/supabaseprincipal';
 import logoImg from '../../assets/Logo.png';
 
 const charactersImg = new URL('../../assets/Frame 35.png', import.meta.url).href;
@@ -46,9 +51,11 @@ const AppleIcon = () => (
         className="login-social-icon"
     />
 );
+
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const { dispatch } = useAppContext();
+    const reduxDispatch = useDispatch<AppDispatch>();
 
     const [form, setForm] = useState<LoginForm>({
         username: '',
@@ -59,100 +66,80 @@ const LoginPage: React.FC = () => {
 
     const validateForm = () => {
         const newErrors: LoginErrors = {};
-
         if (form.username.trim() === '') {
             newErrors.username = 'Username or email is required.';
         }
-
         if (form.password.trim() === '') {
             newErrors.password = 'Password is required.';
         }
-
         return newErrors;
     };
 
     const handleChange = (field: keyof LoginForm, value: string) => {
-        setForm({
-            ...form,
-            [field]: value,
-        });
-
+        setForm({ ...form, [field]: value });
         if (errors[field]) {
-            setErrors({
-                ...errors,
-                [field]: undefined,
-            });
+            setErrors({ ...errors, [field]: undefined });
         }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         const formErrors = validateForm();
-
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
             return;
         }
 
-        const registeredUser = localStorage.getItem('registeredUser');
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: form.username,
+            password: form.password,
+        });
 
-        
-
-        if (!registeredUser) {
-            setErrors({
-                username: 'You need to create an account first.',
-            });
+        if (error) {
+            setErrors({ username: 'Email or password incorrect.' });
             return;
         }
 
-        if (form.username.trim() !== registeredUser) {
-            setErrors({
-                username: 'This user is not registered.',
-            });
-            return;
-        }
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', data.user.id)
+            .single();
 
         dispatch({
             type: 'SET_USER',
             payload: {
-                id: '1',
-                name: registeredUser,
-                email: registeredUser.includes('@') ? registeredUser : 'user@offmood.com',
-                avatar: 'https://i.pravatar.cc/40?img=3',
+                id: data.user.id,
+                name: profile?.username ?? form.username,
+                email: data.user.email ?? '',
+                avatar: profile?.avatar_url ?? 'https://i.pravatar.cc/40?img=3',
             },
         });
+
+        reduxDispatch(fetchPosts());
+        reduxDispatch(fetchAllLikes());
+        reduxDispatch(fetchUserLikes(data.user.id));
+        reduxDispatch(fetchFollowing(data.user.id));
 
         navigate('/feed');
     };
 
     return (
         <main className="login-page">
-
             <section className="login-left">
-
                 <form className="login-form" onSubmit={handleSubmit}>
-
                     <header className="login-header">
                         <img src={logoImg} alt="offmood logo" className="login-logo" />
-
                         <h1>Welcome Back!</h1>
-
-                        <p>
-                            Sign in to continue your emotional journey
-                        </p>
+                        <p>Sign in to continue your emotional journey</p>
                     </header>
 
                     <div className="login-fields">
-
                         <div className="login-field">
                             <label>Username or email</label>
-
                             <div className={errors.username ? 'login-input-wrap login-input-wrap--error' : 'login-input-wrap'}>
-                                <span className="login-input-icon">
-                                    <IconUser />
-                                </span>
-
+                                <span className="login-input-icon"><IconUser /></span>
                                 <input
                                     type="text"
                                     placeholder="Add a nickname"
@@ -160,20 +147,13 @@ const LoginPage: React.FC = () => {
                                     onChange={(event) => handleChange('username', event.target.value)}
                                 />
                             </div>
-
-                            {errors.username && (
-                                <span className="login-error">{errors.username}</span>
-                            )}
+                            {errors.username && <span className="login-error">{errors.username}</span>}
                         </div>
 
                         <div className="login-field">
                             <label>Password</label>
-
                             <div className={errors.password ? 'login-input-wrap login-input-wrap--error' : 'login-input-wrap'}>
-                                <span className="login-input-icon">
-                                    <IconLock />
-                                </span>
-
+                                <span className="login-input-icon"><IconLock /></span>
                                 <input
                                     type="password"
                                     placeholder="••••••••"
@@ -181,28 +161,16 @@ const LoginPage: React.FC = () => {
                                     onChange={(event) => handleChange('password', event.target.value)}
                                 />
                             </div>
-
-                            {errors.password && (
-                                <span className="login-error">{errors.password}</span>
-                            )}
+                            {errors.password && <span className="login-error">{errors.password}</span>}
                         </div>
 
-                        <button
-                            type="button"
-                            className="login-forgot"
-                        >
-                            Forgot your password?
-                        </button>
+                        <button type="button" className="login-forgot">Forgot your password?</button>
 
-                        <button type="submit" className="login-submit">
-                            Log In
-                        </button>
+                        <button type="submit" className="login-submit">Log In</button>
 
                         <p className="login-signup-text">
                             Don't have an account?{' '}
-                            <button type="button" onClick={() => navigate('/signup')}>
-                                Sign Up
-                            </button>
+                            <button type="button" onClick={() => navigate('/signup')}>Sign Up</button>
                         </p>
 
                         <div className="login-divider">
@@ -212,32 +180,16 @@ const LoginPage: React.FC = () => {
                         </div>
 
                         <div className="login-socials">
-                            <button type="button">
-                                <GoogleIcon />
-                            </button>
-
-                            <button type="button">
-                                <AppleIcon />
-                            </button>
+                            <button type="button"><GoogleIcon /></button>
+                            <button type="button"><AppleIcon /></button>
                         </div>
-
                     </div>
-
                 </form>
-
             </section>
 
             <section className="login-right">
-
-
-                <img
-                    src={charactersImg}
-                    alt="offmood emotions"
-                    className="login-characters"
-                />
-
+                <img src={charactersImg} alt="offmood emotions" className="login-characters" />
             </section>
-
         </main>
     );
 };

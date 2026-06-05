@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../store/index';
 import { useAppContext } from '../store/AppContext';
+import { likePost, unlikePost } from '../store/slices/likesSlice';
+import { createComment, fetchCommentsByPost } from '../store/slices/commentsSlice';
 import type { Post } from '../types/profile';
 import '../styles/posts.css';
 
@@ -34,32 +38,45 @@ interface ProfilePostProps {
 }
 
 const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
-  const { state, dispatch } = useAppContext();
+  const dispatch = useDispatch<AppDispatch>();
+  const { state: appState } = useAppContext();
+  const { userLikes, allLikes } = useSelector((state: RootState) => state.likes);
+  const { comments } = useSelector((state: RootState) => state.comments);
+  const currentUserId = appState.currentUser?.id ?? '';
   const [commentInput, setCommentInput] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
-  const isLiked = state.likedPostIds.includes(post.id);
-  const likeCount = state.postLikes[post.id] ?? post.likes;
-  const comments = state.postComments[post.id] ?? (post.lastComment ? [{ user: post.lastComment.author, text: post.lastComment.text }] : []);
+  const isLiked = userLikes.some(l => l.post_id === post.id);
+  const likeCount = allLikes.filter(l => l.post_id === post.id).length;
+  const postComments = comments.filter(c => c.post_id === post.id);
 
-  const handleLike = () => {
-    const current = state.postLikes[post.id] ?? post.likes;
-    dispatch({ type: 'TOGGLE_LIKE', payload: post.id });
-    dispatch({ type: 'SET_POST_LIKES', payload: { id: post.id, count: isLiked ? current - 1 : current + 1 } });
+  const handleLike = async () => {
+    if (!currentUserId) return;
+    if (isLiked) {
+      await dispatch(unlikePost({ user_id: currentUserId, post_id: post.id }));
+    } else {
+      await dispatch(likePost({ user_id: currentUserId, post_id: post.id }));
+    }
   };
 
-  const handleComment = () => {
+  const handleExpandComments = () => {
+    if (!expanded) dispatch(fetchCommentsByPost(post.id));
+    setExpanded(prev => !prev);
+  };
+
+  const handleComment = async () => {
     const text = commentInput.trim();
     if (!text) return;
-    dispatch({
-      type: 'SET_POST_COMMENT',
-      payload: { id: post.id, comments: [...comments, { user: state.currentUser?.name ?? 'Usuario', text }] },
-    });
+    await dispatch(createComment({
+      post_id: post.id,
+      user_id: currentUserId,
+      content: text,
+    }));
     setCommentInput('');
   };
 
   const mood = moodColors[post.mood] ?? moodColors.Happy;
 
-  // intenta parsear la fecha, si falla usa el string directo
   const timeDisplay = (() => {
     const parsed = new Date(post.timeAgo);
     return isNaN(parsed.getTime()) ? post.timeAgo : timeAgo(post.timeAgo);
@@ -98,35 +115,39 @@ const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
         >
           {isLiked ? '♥' : '♡'} {likeCount}
         </button>
-        <button className="post-action-btn">
-          ○ {comments.length}
+        <button className="post-action-btn" onClick={handleExpandComments}>
+          ○ {postComments.length}
         </button>
       </div>
 
       {/* Comentarios */}
-      {comments.map((c, i) => (
-        <div key={i} className="post-comment">
-          <span className="post-comment-user">{c.user}</span>
-          <span className="post-comment-text"> {c.text}</span>
-        </div>
-      ))}
+      {expanded && (
+        <>
+          {postComments.map((c) => (
+            <div key={c.id} className="post-comment">
+              <span className="post-comment-user">{c.profiles?.username ?? c.user_id}</span>
+              <span className="post-comment-text"> {c.content}</span>
+            </div>
+          ))}
 
-      {/* Input comentario */}
-      <div className="post-comment-input">
-        <img src={state.currentUser?.avatar ?? post.authorAvatar} alt="avatar" className="post-avatar-sm" />
-        <input
-          type="text"
-          placeholder="Write your comment..."
-          maxLength={200}
-          value={commentInput}
-          onChange={e => setCommentInput(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') handleComment(); }}
-          className="post-input"
-        />
-        <span style={{ fontSize: '0.75rem', color: '#bbb', textAlign: 'right' }}>
-          {commentInput.length}/200
-        </span>
-      </div>
+          {/* Input comentario */}
+          <div className="post-comment-input">
+            <img src={appState.currentUser?.avatar ?? post.authorAvatar} alt="avatar" className="post-avatar-sm" />
+            <input
+              type="text"
+              placeholder="Write your comment..."
+              maxLength={200}
+              value={commentInput}
+              onChange={e => setCommentInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleComment(); }}
+              className="post-input"
+            />
+            <span style={{ fontSize: '0.75rem', color: '#bbb', textAlign: 'right' }}>
+              {commentInput.length}/200
+            </span>
+          </div>
+        </>
+      )}
 
     </article>
   );
