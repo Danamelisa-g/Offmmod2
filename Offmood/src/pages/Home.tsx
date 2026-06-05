@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../store/index';
 import { fetchPosts } from '../store/slices/postsSlice';
 import { fetchCommentsByPost, createComment } from '../store/slices/commentsSlice';
+import { fetchFollowing, followUser, unfollowUser } from '../store/slices/followersSlice';
 import './Home.css';
 import MoodSelector from '../components/moods/MoodSelector';
 import { useAppContext } from '../store/AppContext';
@@ -41,6 +42,7 @@ const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { posts, loading } = useSelector((state: RootState) => state.posts);
   const { comments } = useSelector((state: RootState) => state.comments);
+  const { following } = useSelector((state: RootState) => state.followers);
   const { state: appState } = useAppContext();
   const currentUserId = appState.currentUser?.id ?? '';
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
@@ -50,7 +52,20 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchPosts());
-  }, [dispatch]);
+    if (currentUserId) dispatch(fetchFollowing(currentUserId));
+  }, [dispatch, currentUserId]);
+
+  const isFollowing = (userId: string) =>
+    following.some(f => f.following_id === userId);
+
+  const handleFollow = async (userId: string) => {
+    if (!currentUserId) return;
+    if (isFollowing(userId)) {
+      await dispatch(unfollowUser({ follower_id: currentUserId, following_id: userId }));
+    } else {
+      await dispatch(followUser({ follower_id: currentUserId, following_id: userId }));
+    }
+  };
 
   const handleExpandComments = (postId: string) => {
     if (!expandedPosts[postId]) {
@@ -92,6 +107,7 @@ const Home: React.FC = () => {
         const likeCount = localLikes[post.id] ?? 0;
         const expanded = expandedPosts[post.id] ?? false;
         const postCommentsData = postComments(post.id);
+        const isOwnPost = post.user_id === currentUserId;
 
         return (
           <div key={post.id} className="home-card home-post">
@@ -103,6 +119,24 @@ const Home: React.FC = () => {
                   <span className="post-username">{post.profiles?.username ?? post.user_id}</span>
                   <span className="post-time">{timeAgo(post.created_at)}</span>
                 </div>
+                {!isOwnPost && (
+                  <button
+                    className="post-follow-btn"
+                    onClick={() => handleFollow(post.user_id)}
+                    style={{
+                      marginLeft: '12px',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      border: '1px solid #7ab3d4',
+                      background: isFollowing(post.user_id) ? '#7ab3d4' : 'transparent',
+                      color: isFollowing(post.user_id) ? '#fff' : '#7ab3d4',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                    }}
+                  >
+                    {isFollowing(post.user_id) ? 'Following' : 'Follow'}
+                  </button>
+                )}
               </div>
               <div className="post-mood-badge" style={{ background: mood.bg, borderColor: mood.border, color: mood.text }}>
                 <img src={moodImgs[post.mood ?? 'happy']} alt={post.mood ?? 'happy'} className="post-mood-icon" />
