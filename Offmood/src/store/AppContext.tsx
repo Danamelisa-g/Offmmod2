@@ -2,7 +2,6 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { fakePosts } from '../data/fakePosts';
 import type { Post } from '../data/fakePosts';
 import type { ProfileData } from '../types/profile';
-import mockData from '../services/mockData.json';
 import type { MoodKey } from '../data/moods';
 
 // ── Tipos base del usuario de sesión ──────────────────────────
@@ -49,13 +48,6 @@ type AppAction =
       mood: MoodKey;
     };
   };
-// ── Mock user de sesión ────────────────────────────────────────
-const MOCK_USER: User = {
-  id: '1',
-  name: 'Adam Smith',
-  email: 'adam@offmood.com',
-  avatar: 'https://i.pravatar.cc/40?img=3',
-};
 
 // ── Persistencia ───────────────────────────────────────────────
 const loadFromStorage = (): Partial<AppState> => {
@@ -72,10 +64,28 @@ const savedState = loadFromStorage();
 const initialState: AppState = {
   activePath: savedState.activePath ?? '/feed',
   sidebarOpen: false,
-  currentUser: (savedState as AppState).currentUser ?? MOCK_USER,
-  isAuthenticated: true,
+  currentUser: (savedState as AppState).currentUser ?? null,
+  isAuthenticated: (savedState as AppState).isAuthenticated ?? false,
   posts: savedState.posts ?? fakePosts,
-  profile: (savedState as AppState).profile ?? (mockData.profile as ProfileData),
+ profile: (savedState as AppState).profile ?? {
+  id: '',
+  name: '',
+  username: '',
+  email: '',
+  avatar: '',
+  bio: '',
+  stats: { posts: 0, comments: 0, followers: 0 },
+  moodVisibility: 'public',
+  weekMoods: [
+    { day: 'sun', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'mon', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'tue', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'wed', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'thu', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'fri', mood: null, image: null, color: '#FAF7F0' },
+    { day: 'sat', mood: null, image: null, color: '#FAF7F0' },
+  ],
+},
   likedPostIds: (savedState as AppState).likedPostIds ?? [],
   postLikes: (savedState as AppState).postLikes ?? {},
   postComments: (savedState as AppState).postComments ?? {},

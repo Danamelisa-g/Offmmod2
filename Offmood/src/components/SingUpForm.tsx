@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './SingUpForm.css';
- 
+import { supabase } from '../supabaseClient/supabaseprincipal';
 // Logo real desde la carpeta assets
 import logoImg from '../assets/Logo.png';
  
@@ -12,7 +12,7 @@ interface FormState {
   password: string;
   acceptTerms: boolean;
 }
- 
+ // Mensajes de error opcionales por campo
 interface FormErrors {
   username?: string;
   email?: string;
@@ -145,14 +145,30 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess, onGoToLogin }) => {
     setLoading(true);
  
     try {
-      // Simulamos una llamada al servidor (1.2 segundos)
-      // Cuando tengas backend real reemplaza esta linea
-      await new Promise(resolve => setTimeout(resolve, 1200));
- 
-      // Le avisamos a la pagina padre que el registro fue exitoso
-      if (onSuccess) {
-        onSuccess(form.username);
-      }
+  // 1. Registrar en Supabase Auth
+  const { data, error } = await supabase.auth.signUp({
+    email: form.email,
+    password: form.password,
+  });
+
+  if (error) {
+    setErrors({ email: error.message });
+    return;
+  }
+
+  // 2. Guardar el username en la tabla profiles
+  if (data.user) {
+    await supabase.from('profiles').insert({
+      id: data.user.id,
+      username: form.username,
+    });
+  }
+
+  // 3. Avisar que el registro fue exitoso
+  if (onSuccess) {
+    onSuccess(form.username);
+  }
+
  
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {

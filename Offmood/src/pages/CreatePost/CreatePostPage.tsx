@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../store/index';
+import { createPost } from '../../store/slices/postsSlice';
 import { useAppContext } from '../../store/AppContext';
 import './CreatePost.css';
 
@@ -20,8 +23,10 @@ const moodColors: Record<string, string> = {
 };
 
 const CreatePostPage: React.FC = () => {
-  const { state, dispatch } = useAppContext();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { state: appState } = useAppContext();
+  const currentUserId = appState.currentUser?.id ?? '';
 
   const [content, setContent] = useState('');
   const [mood, setMood] = useState<string | null>(null);
@@ -35,21 +40,14 @@ const CreatePostPage: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!content.trim()) return;
-    dispatch({
-      type: 'ADD_POST',
-      payload: {
-        id: Date.now(),
-        userId: state.currentUser?.id ?? '1',
-        user: state.currentUser?.name ?? 'Usuario',
-        avatar: state.currentUser?.avatar ?? '',
-        content,
-        image,
-        date: new Date().toISOString(),
-        mood: mood ?? 'happy',
-      },
-    });
+    await dispatch(createPost({
+      user_id: currentUserId,
+      content,
+      image_url: image,
+      mood: mood ?? 'happy',
+    }));
     navigate('/feed');
   };
 
@@ -67,8 +65,7 @@ const CreatePostPage: React.FC = () => {
 
         {/* Author */}
         <div className="cp-author">
-          <img src={state.currentUser?.avatar} alt="avatar" className="cp-avatar" />
-          <span className="cp-username">{state.currentUser?.name}</span>
+          <span className="cp-username">Current User</span>
         </div>
 
         {/* Textarea */}
