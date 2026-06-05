@@ -8,11 +8,15 @@ const charactersImg = new URL('../../assets/Frame 35.png', import.meta.url).href
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // Se invoca desde SignUpForm cuando Supabase termina el registro sin errores.
+  // username: el nombre que el usuario eligió en el formulario.
   const handleSuccess = (username: string) => {
+     // Guarda el username para que LoginPage pueda pre-rellenar el campo si lo necesita
     localStorage.setItem('registeredUser', username);
+    // Redirige al login para que el usuario inicie sesión con su nueva cuenta
     navigate('/login');
   };
-
+  // Se invoca cuando el usuario hace clic en "Log in" dentro del formulario
   const handleGoToLogin = () => {
     navigate('/login');
   };

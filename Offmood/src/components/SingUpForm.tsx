@@ -12,7 +12,7 @@ interface FormState {
   password: string;
   acceptTerms: boolean;
 }
- 
+ // Mensajes de error opcionales por campo
 interface FormErrors {
   username?: string;
   email?: string;

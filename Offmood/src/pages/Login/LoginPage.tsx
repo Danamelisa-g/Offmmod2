@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// AppContext: contexto global propio de la app (usuario activo, ruta activa, etc.)
 import { useAppContext } from '../../store/AppContext';
+// useDispatch de Redux — permite lanzar thunks asíncronos al store de Redux
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store/index';
-import { fetchPosts } from '../../store/slices/postsSlice';
-import { fetchAllLikes, fetchUserLikes } from '../../store/slices/likesSlice';
-import { fetchFollowing } from '../../store/slices/followersSlice';
+// Thunks de Redux: cada uno hace una llamada a Supabase y guarda el resultado en Redux
+import { fetchPosts } from '../../store/slices/postsSlice'; // trae todos los posts
+import { fetchAllLikes, fetchUserLikes } from '../../store/slices/likesSlice';// likes globales y del usuario
+import { fetchFollowing } from '../../store/slices/followersSlice';// lista de usuarios que sigue el usuario
 import './LoginPage.css';
+// Cliente de Supabase: conexión configurada con la URL y la API key del proyecto
 import { supabase } from '../../supabaseClient/supabaseprincipal';
 import logoImg from '../../assets/Logo.png';
 
 const charactersImg = new URL('../../assets/Frame 35.png', import.meta.url).href;
-
+// Estructura de los campos del formulario
 interface LoginForm {
-    username: string;
+    username: string;// en realidad se usa como email al llamar a Supabase
     password: string;
 }
-
+// Mensajes de error por campo
 interface LoginErrors {
     username?: string;
     password?: string;
@@ -35,7 +39,7 @@ const IconLock = () => (
         <path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" />
     </svg>
 );
-
+// Iconos de proveedores OAuth (Google / Apple) — aún sin implementar
 const GoogleIcon = () => (
     <img
         src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -51,19 +55,21 @@ const AppleIcon = () => (
         className="login-social-icon"
     />
 );
-
+//Componente principal 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
+    // dispatch del AppContext actualiza el estado global propio (usuario logueado)
     const { dispatch } = useAppContext();
+     // dispatch de Redux lanza thunks que cargan datos en el store de Redux
     const reduxDispatch = useDispatch<AppDispatch>();
-
+  // Estado local del formulario y de los errores de validación
     const [form, setForm] = useState<LoginForm>({
         username: '',
         password: '',
     });
-
+ // Estado local de errores de validación
     const [errors, setErrors] = useState<LoginErrors>({});
-
+ // Valida que ningún campo esté vacío; devuelve un objeto con los errores encontrados
     const validateForm = () => {
         const newErrors: LoginErrors = {};
         if (form.username.trim() === '') {
@@ -74,54 +80,58 @@ const LoginPage: React.FC = () => {
         }
         return newErrors;
     };
-
+ // Actualiza el campo modificado y borra su error en tiempo real mientras el usuario escribe
     const handleChange = (field: keyof LoginForm, value: string) => {
         setForm({ ...form, [field]: value });
         if (errors[field]) {
             setErrors({ ...errors, [field]: undefined });
         }
     };
-
+ // handleSubmit: flujo completo de login
     const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-
+        event.preventDefault(); // evita que el formulario recargue la página
+// 1. Validación del lado del cliente
         const formErrors = validateForm();
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
-            return;
+            return;// detiene el flujo si hay errores
         }
-
+ // 2. Autenticación con Supabase Auth
+        //    signInWithPassword compara email + contraseña con los usuarios registrados en Supabase Auth
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: form.username,
+            email: form.username, // el campo se llama "username" pero Supabase usa email
             password: form.password,
         });
-
+ // Si las credenciales son incorrectas, Supabase devuelve un error
         if (error) {
             setErrors({ username: 'Email or password incorrect.' });
             return;
         }
-
+  // 3. Obtener el perfil del usuario desde la tabla "profiles" de Supabase
+        //    La tabla "profiles" extiende la tabla auth.users con datos extra (username, avatar)
         const { data: profile } = await supabase
             .from('profiles')
             .select('username, avatar_url')
-            .eq('id', data.user.id)
-            .single();
-
+            .eq('id', data.user.id)// filtra por el ID del usuario autenticado
+            .single();    // espera exactamente un registro
+// 4. Guardar el usuario en el AppContext (estado global de la app)
+        //    Esto hace que la Navbar, Sidebar, etc. muestren el nombre y avatar correctos
         dispatch({
             type: 'SET_USER',
             payload: {
                 id: data.user.id,
-                name: profile?.username ?? form.username,
+                name: profile?.username ?? form.username, // fallback al email si no hay username
                 email: data.user.email ?? '',
                 avatar: profile?.avatar_url ?? 'https://i.pravatar.cc/40?img=3',
             },
         });
-
+ // 5. Pre-cargar datos en Redux para que el Feed esté listo al llegar
+        //    Cada reduxDispatch lanza un thunk asíncrono que llama a Supabase internamente
         reduxDispatch(fetchPosts());
         reduxDispatch(fetchAllLikes());
         reduxDispatch(fetchUserLikes(data.user.id));
         reduxDispatch(fetchFollowing(data.user.id));
-
+  // 6. Redirigir al feed tras el login exitoso
         navigate('/feed');
     };
 
