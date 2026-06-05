@@ -13,8 +13,7 @@ import ProfileTabs, { type TabId } from '../../components/ProfileTabs'; // pesta
 import ProfilePost from '../../components/ProfilePost';        // tarjeta de cada post
  
 import type { Post } from '../../types/profile';
-import './profile.css';
- 
+import "./Profile.css"; 
 // Mapa de nombre de mood en inglés → nombre del archivo de imagen en assets
 // Permite construir la ruta de la imagen del mood para cada post
 const moodImgMap: Record<string, string> = {
