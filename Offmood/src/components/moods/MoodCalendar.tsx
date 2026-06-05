@@ -15,6 +15,7 @@ const monthNames = [
     'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+// Convierte una fecha normal al formato que se compara con Supabase
 const getDateKey = (date: Date) => {
     return date.toISOString().split('T')[0];
 };
@@ -22,18 +23,23 @@ const getDateKey = (date: Date) => {
 const MoodCalendar = () => {
     const { state } = useAppContext();
 
+    // Emociones del usuario traidas desde Supabase
     const [entries, setEntries] = useState<MoodEntry[]>([]);
+
+    // Mes que se esta mostrando en el calendario
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const userId = state.currentUser?.id;
 
     useEffect(() => {
         const loadMoodEntries = async () => {
+            // Si no hay usuario, no se cargan emociones
             if (!userId) {
                 return;
             }
 
             try {
+                // Trae todos los registros de emociones del usuario
                 const moodEntries = await getMoodEntries(userId);
                 setEntries(moodEntries);
             } catch (error) {
@@ -47,12 +53,14 @@ const MoodCalendar = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
+    // Calcula desde que día debe empezar la cuadricula del calendario
     const firstDayOfMonth = new Date(year, month, 1);
     const startDay = firstDayOfMonth.getDay();
     const calendarStartDate = new Date(year, month, 1 - startDay);
 
     const calendarDays = [];
 
+    // Se crean los días visibles del calendario, incluyendo algunos del mes anterior o siguiente
     for (let i = 0; i < 35; i++) {
         const date = new Date(calendarStartDate);
         date.setDate(calendarStartDate.getDate() + i);
@@ -96,10 +104,12 @@ const MoodCalendar = () => {
                 {calendarDays.map((date) => {
                     const dateKey = getDateKey(date);
 
+                    // Busca si para este día hay una emoción guardada
                     const savedEntry = entries.find(
                         (entry) => entry.entry_date === dateKey
                     );
 
+                    // Busca la imagen y datos visuales de esa emoción
                     const savedMood = moods.find(
                         (mood) => mood.key === savedEntry?.mood
                     );

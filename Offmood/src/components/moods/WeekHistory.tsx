@@ -5,6 +5,7 @@ interface WeekHistoryProps {
     entries: MoodEntry[];
 }
 
+// Arma la semana actual desde domingo hasta sabado
 const getCurrentWeekDates = () => {
     const today = new Date();
     const currentDay = today.getDay();
@@ -35,6 +36,7 @@ const WeekHistory = ({ entries }: WeekHistoryProps) => {
 
     const today = new Date().toISOString().split('T')[0];
 
+    // Solo se muestra el historial semanal si ya hay una emoción registrada hoy
     const todayMood = entries.find((entry) => entry.entry_date === today);
 
     if (!todayMood) {
@@ -49,6 +51,7 @@ const WeekHistory = ({ entries }: WeekHistoryProps) => {
 
             <div className="week-history-days">
                 {weekDates.map((day) => {
+                    // Revisa si cada día de la semana tiene una emoción guardada
                     const savedEntry = entries.find(
                         (entry) => entry.entry_date === day.date
                     );
