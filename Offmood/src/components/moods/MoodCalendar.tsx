@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { moods } from '../../data/moods';
 import { useAppContext } from '../../store/AppContext';
+import {
+    getMoodEntries,
+    type MoodEntry,
+} from '../../services/moodEntriesService';
 import './MoodCalendar.css';
 
 const weekDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -18,22 +22,35 @@ const getDateKey = (date: Date) => {
 const MoodCalendar = () => {
     const { state } = useAppContext();
 
-    // Se guarda el mes visible del calendario.
+    const [entries, setEntries] = useState<MoodEntry[]>([]);
     const [currentMonth, setCurrentMonth] = useState(new Date());
+
+    const userId = state.currentUser?.id;
+
+    useEffect(() => {
+        const loadMoodEntries = async () => {
+            if (!userId) {
+                return;
+            }
+
+            try {
+                const moodEntries = await getMoodEntries(userId);
+                setEntries(moodEntries);
+            } catch (error) {
+                console.error('Error loading calendar mood entries:', error);
+            }
+        };
+
+        loadMoodEntries();
+    }, [userId]);
 
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
-    // Se calcula el primer día del mes visible.
     const firstDayOfMonth = new Date(year, month, 1);
-
-    // Se calcula desde qué día de la semana empieza el mes.
     const startDay = firstDayOfMonth.getDay();
-
-    // Se crea una fecha inicial para llenar la grilla completa.
     const calendarStartDate = new Date(year, month, 1 - startDay);
 
-    // Se construyen 35 días para mantener una grilla estable de 5 semanas.
     const calendarDays = [];
 
     for (let i = 0; i < 35; i++) {
@@ -53,9 +70,10 @@ const MoodCalendar = () => {
 
     return (
         <section className="mood-calendar-card">
-
             <div className="mood-calendar-header">
-                <h2>{monthNames[month]} {year}</h2>
+                <h2>
+                    {monthNames[month]} {year}
+                </h2>
 
                 <div className="mood-calendar-actions">
                     <button type="button" onClick={goToPreviousMonth}>
@@ -77,8 +95,15 @@ const MoodCalendar = () => {
             <div className="mood-calendar-grid">
                 {calendarDays.map((date) => {
                     const dateKey = getDateKey(date);
-                    const savedMoodKey = state.dailyMoods[dateKey];
-                    const savedMood = moods.find((mood) => mood.key === savedMoodKey);
+
+                    const savedEntry = entries.find(
+                        (entry) => entry.entry_date === dateKey
+                    );
+
+                    const savedMood = moods.find(
+                        (mood) => mood.key === savedEntry?.mood
+                    );
+
                     const isCurrentMonth = date.getMonth() === month;
 
                     return (
@@ -99,7 +124,6 @@ const MoodCalendar = () => {
                     );
                 })}
             </div>
-
         </section>
     );
 };
