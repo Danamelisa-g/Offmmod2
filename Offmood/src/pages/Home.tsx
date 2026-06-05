@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../store/index';
-import { fetchPosts } from '../store/slices/postsSlice';
 import { fetchCommentsByPost, createComment } from '../store/slices/commentsSlice';
-import { fetchFollowing, followUser, unfollowUser } from '../store/slices/followersSlice';
-import { fetchUserLikes, likePost, unlikePost } from '../store/slices/likesSlice';
+import { followUser, unfollowUser } from '../store/slices/followersSlice';
+import { likePost, unlikePost } from '../store/slices/likesSlice';
 import './Home.css';
 import MoodSelector from '../components/moods/MoodSelector';
 import { useAppContext } from '../store/AppContext';
+
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
   anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
@@ -44,19 +44,11 @@ const Home: React.FC = () => {
   const { posts, loading } = useSelector((state: RootState) => state.posts);
   const { comments } = useSelector((state: RootState) => state.comments);
   const { following } = useSelector((state: RootState) => state.followers);
-  const { likes } = useSelector((state: RootState) => state.likes);
+  const { userLikes, allLikes } = useSelector((state: RootState) => state.likes);
   const { state: appState } = useAppContext();
   const currentUserId = appState.currentUser?.id ?? '';
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    dispatch(fetchPosts());
-    if (currentUserId) {
-      dispatch(fetchFollowing(currentUserId));
-      dispatch(fetchUserLikes(currentUserId));
-    }
-  }, [dispatch, currentUserId]);
 
   const isFollowing = (userId: string) =>
     following.some(f => f.following_id === userId);
@@ -71,10 +63,10 @@ const Home: React.FC = () => {
   };
 
   const isLiked = (postId: string) =>
-    likes.some(l => l.post_id === postId);
+  userLikes.some(l => l.post_id === postId);
 
-  const likeCount = (postId: string) =>
-    likes.filter(l => l.post_id === postId).length;
+const likeCount = (postId: string) =>
+  allLikes.filter(l => l.post_id === postId).length;
 
   const handleLike = async (postId: string) => {
     if (!currentUserId) return;
@@ -179,7 +171,7 @@ const Home: React.FC = () => {
               <>
                 {postCommentsData.map((c) => (
                   <div key={c.id} className="post-comment">
-                    <span className="post-comment-user">{c.user_id}</span>
+                    <span className="post-comment-user">{c.profiles?.username ?? c.user_id}</span>
                     <span className="post-comment-text"> {c.content}</span>
                   </div>
                 ))}

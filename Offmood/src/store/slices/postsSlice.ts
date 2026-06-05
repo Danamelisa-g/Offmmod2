@@ -33,10 +33,12 @@ export const fetchPosts = createAsyncThunk('posts/fetchAll', async () => {
   return response.data;
 });
 
-export const createPost = createAsyncThunk('posts/create', async (post: Omit<Post, 'id' | 'created_at'>) => {
-  const response = await supabaseClient.post('posts', post, {
-    headers: { Prefer: 'return=representation' },
-  });
+export const createPost = createAsyncThunk('posts/create', async (post: Omit<Post, 'id' | 'created_at' | 'profiles'>) => {
+  const response = await supabaseClient.post(
+    'posts?select=*,profiles(username,avatar_url)',
+    post,
+    { headers: { Prefer: 'return=representation' } }
+  );
   return response.data[0];
 });
 

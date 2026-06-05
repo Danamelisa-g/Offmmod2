@@ -9,20 +9,22 @@ interface Like {
 }
 
 interface LikesState {
-  likes: Like[];
+  userLikes: Like[];    // likes del usuario actual
+  allLikes: Like[];     // likes de todos los posts
   loading: boolean;
   error: string | null;
 }
 
 const initialState: LikesState = {
-  likes: [],
+  userLikes: [],
+  allLikes: [],
   loading: false,
   error: null,
 };
 
-export const fetchLikesByPost = createAsyncThunk('likes/fetchByPost', async (postId: string) => {
-  const response = await supabaseClient.get(`likes?post_id=eq.${postId}`);
-  return { postId, data: response.data };
+export const fetchAllLikes = createAsyncThunk('likes/fetchAll', async () => {
+  const response = await supabaseClient.get('likes');
+  return response.data;
 });
 
 export const fetchUserLikes = createAsyncThunk('likes/fetchUserLikes', async (userId: string) => {
@@ -48,14 +50,26 @@ const likesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchAllLikes.fulfilled, (state, action) => {
+        state.allLikes = action.payload;
+      })
       .addCase(fetchUserLikes.fulfilled, (state, action) => {
-        state.likes = action.payload;
+        state.userLikes = action.payload;
+        // también actualiza allLikes con los del usuario
+        const otherLikes = state.allLikes.filter(
+          l => !action.payload.some((ul: Like) => ul.id === l.id)
+        );
+        state.allLikes = [...otherLikes, ...action.payload];
       })
       .addCase(likePost.fulfilled, (state, action) => {
-        state.likes.push(action.payload);
+        state.userLikes.push(action.payload);
+        state.allLikes.push(action.payload);
       })
       .addCase(unlikePost.fulfilled, (state, action) => {
-        state.likes = state.likes.filter(
+        state.userLikes = state.userLikes.filter(
+          l => !(l.user_id === action.payload.user_id && l.post_id === action.payload.post_id)
+        );
+        state.allLikes = state.allLikes.filter(
           l => !(l.user_id === action.payload.user_id && l.post_id === action.payload.post_id)
         );
       });

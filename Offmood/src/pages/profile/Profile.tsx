@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/index';
 import { useAppContext } from '../../store/AppContext';
 import ProfileHeader from '../../components/ProfileHeader';
 import ProfileTabs, { type TabId } from '../../components/ProfileTabs';
@@ -6,81 +8,84 @@ import ProfilePost from '../../components/ProfilePost';
 import type { Post } from '../../types/profile';
 import './profile.css';
 
+const moodImgMap: Record<string, string> = {
+  anxious: 'Ansioso',
+  angry: 'Enojado',
+  happy: 'Feliz',
+  disgusted: 'Disgustado',
+  sad: 'Triste',
+};
+
 const Profile: React.FC = () => {
-  const { state } = useAppContext();
+  const { state: appState } = useAppContext();
+  const { posts } = useSelector((state: RootState) => state.posts);
+  const { userLikes, allLikes } = useSelector((state: RootState) => state.likes);
+  const currentUserId = appState.currentUser?.id ?? '';
   const [activeTab, setActiveTab] = useState<TabId>('posts');
 
-  const myPosts: Post[] = state.posts
-    .filter(p => p.userId === state.currentUser?.id)
+
+  const myPosts: Post[] = posts
+    .filter(p => p.user_id === currentUserId)
     .map(p => ({
-      id: p.id,
-      authorName: state.currentUser?.name ?? p.user,
-      authorAvatar: state.currentUser?.avatar ?? p.avatar,
-      timeAgo: p.date,
+      id: String(p.id),
+      authorName: appState.currentUser?.name ?? p.user_id,
+      authorAvatar: appState.currentUser?.avatar ?? '',
+      timeAgo: p.created_at,
       content: p.content,
-      image: p.image,
-      mood: p.mood.charAt(0).toUpperCase() + p.mood.slice(1),
-      moodImage: `/src/assets/${
-        p.mood === 'anxious' ? 'Ansioso' :
-        p.mood === 'angry' ? 'Enojado' :
-        p.mood === 'happy' ? 'Feliz' :
-        p.mood === 'disgusted' ? 'Disgustado' : 'Triste'
-      }.png`,
+      image: p.image_url,
+      mood: p.mood ? p.mood.charAt(0).toUpperCase() + p.mood.slice(1) : 'Happy',
+      moodImage: `/src/assets/${moodImgMap[p.mood ?? 'happy'] ?? 'Feliz'}.png`,
       moodColor: '',
-      likes: 0,
+      likes: allLikes.filter((l: { post_id: string }) => l.post_id === p.id).length,
       commentsCount: 0,
       lastComment: null,
     }));
 
-  const likedPosts: Post[] = state.posts
-    .filter(p => state.likedPostIds.includes(p.id))
+  const likedPostIds = userLikes.map((l: { post_id: string }) => l.post_id);
+
+  const likedPosts: Post[] = posts
+    .filter(p => likedPostIds.includes(p.id))
     .map(p => ({
-      id: p.id,
-      authorName: p.userId === state.currentUser?.id ? (state.currentUser?.name ?? p.user) : p.user,
-      authorAvatar: p.userId === state.currentUser?.id ? (state.currentUser?.avatar ?? p.avatar) : p.avatar,
-      timeAgo: p.date,
+      id: String(p.id),
+      authorName: p.profiles?.username ?? p.user_id,
+      authorAvatar: '',
+      timeAgo: p.created_at,
       content: p.content,
-      image: p.image,
-      mood: p.mood.charAt(0).toUpperCase() + p.mood.slice(1),
-      moodImage: `/src/assets/${
-        p.mood === 'anxious' ? 'Ansioso' :
-        p.mood === 'angry' ? 'Enojado' :
-        p.mood === 'happy' ? 'Feliz' :
-        p.mood === 'disgusted' ? 'Disgustado' : 'Triste'
-      }.png`,
+      image: p.image_url,
+      mood: p.mood ? p.mood.charAt(0).toUpperCase() + p.mood.slice(1) : 'Happy',
+      moodImage: `/src/assets/${moodImgMap[p.mood ?? 'happy'] ?? 'Feliz'}.png`,
       moodColor: '',
-      likes: 0,
+      likes: allLikes.filter((l: { post_id: string }) => l.post_id === p.id).length,
       commentsCount: 0,
       lastComment: null,
     }));
-
-  // Stats calculados desde el estado real
-  const myPostsCount = myPosts.length;
-  const myCommentsCount = Object.values(state.postComments)
-    .flat()
-    .filter(c => c.user === state.currentUser?.name).length;
 
   const profileWithStats = {
-    ...state.profile,
+    ...appState.profile,
+    name: appState.currentUser?.name ?? appState.profile.name,
+    avatar: appState.currentUser?.avatar ?? appState.profile.avatar,
     stats: {
-      ...state.profile.stats,
-      posts: myPostsCount,
-      comments: myCommentsCount,
+      ...appState.profile.stats,
+      posts: myPosts.length,
+      comments: appState.profile.stats.comments,
+      followers: appState.profile.stats.followers,
     },
   };
 
-  const posts = activeTab === 'posts' ? myPosts : likedPosts;
-
+  const displayPosts = activeTab === 'posts' ? myPosts : likedPosts;
+console.log('userLikes:', userLikes);
+console.log('likedPostIds:', likedPostIds);
+console.log('posts ids:', posts.map(p => p.id));
   return (
     <div className="profile-page">
       <ProfileHeader profile={profileWithStats} />
       <ProfileTabs active={activeTab} onChange={setActiveTab} />
       <div className="profile-feed">
-        {posts.length === 0
+        {displayPosts.length === 0
           ? <p style={{ textAlign: 'center', color: '#aaa', padding: '32px' }}>
               {activeTab === 'posts' ? 'No posts yet.' : 'No liked posts yet.'}
             </p>
-          : posts.map(post => <ProfilePost key={post.id} post={post} />)
+          : displayPosts.map(post => <ProfilePost key={post.id} post={post} />)
         }
       </div>
     </div>

@@ -7,6 +7,10 @@ interface Comment {
   user_id: string;
   post_id: string;
   content: string;
+  profiles?: {
+    username: string;
+    avatar_url: string | null;
+  };
 }
 
 interface CommentsState {
@@ -22,7 +26,9 @@ const initialState: CommentsState = {
 };
 
 export const fetchCommentsByPost = createAsyncThunk('comments/fetchByPost', async (postId: string) => {
-  const response = await supabaseClient.get(`comments?post_id=eq.${postId}&order=created_at.asc`);
+  const response = await supabaseClient.get(
+    `comments?post_id=eq.${postId}&select=*,profiles(username,avatar_url)&order=created_at.asc`
+  );
   return response.data;
 });
 
