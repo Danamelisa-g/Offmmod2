@@ -4,6 +4,7 @@ import type { AppDispatch, RootState } from '../store/index';
 import { fetchPosts } from '../store/slices/postsSlice';
 import { fetchCommentsByPost, createComment } from '../store/slices/commentsSlice';
 import { fetchFollowing, followUser, unfollowUser } from '../store/slices/followersSlice';
+import { fetchUserLikes, likePost, unlikePost } from '../store/slices/likesSlice';
 import './Home.css';
 import MoodSelector from '../components/moods/MoodSelector';
 import { useAppContext } from '../store/AppContext';
@@ -43,16 +44,18 @@ const Home: React.FC = () => {
   const { posts, loading } = useSelector((state: RootState) => state.posts);
   const { comments } = useSelector((state: RootState) => state.comments);
   const { following } = useSelector((state: RootState) => state.followers);
+  const { likes } = useSelector((state: RootState) => state.likes);
   const { state: appState } = useAppContext();
   const currentUserId = appState.currentUser?.id ?? '';
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
-  const [localLikes, setLocalLikes] = useState<Record<string, number>>({});
-  const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     dispatch(fetchPosts());
-    if (currentUserId) dispatch(fetchFollowing(currentUserId));
+    if (currentUserId) {
+      dispatch(fetchFollowing(currentUserId));
+      dispatch(fetchUserLikes(currentUserId));
+    }
   }, [dispatch, currentUserId]);
 
   const isFollowing = (userId: string) =>
@@ -67,17 +70,26 @@ const Home: React.FC = () => {
     }
   };
 
+  const isLiked = (postId: string) =>
+    likes.some(l => l.post_id === postId);
+
+  const likeCount = (postId: string) =>
+    likes.filter(l => l.post_id === postId).length;
+
+  const handleLike = async (postId: string) => {
+    if (!currentUserId) return;
+    if (isLiked(postId)) {
+      await dispatch(unlikePost({ user_id: currentUserId, post_id: postId }));
+    } else {
+      await dispatch(likePost({ user_id: currentUserId, post_id: postId }));
+    }
+  };
+
   const handleExpandComments = (postId: string) => {
     if (!expandedPosts[postId]) {
       dispatch(fetchCommentsByPost(postId));
     }
     setExpandedPosts(prev => ({ ...prev, [postId]: !prev[postId] }));
-  };
-
-  const handleLike = (postId: string) => {
-    const isLiked = likedPosts[postId];
-    setLikedPosts(prev => ({ ...prev, [postId]: !isLiked }));
-    setLocalLikes(prev => ({ ...prev, [postId]: (prev[postId] ?? 0) + (isLiked ? -1 : 1) }));
   };
 
   const handleComment = async (postId: string) => {
@@ -103,8 +115,6 @@ const Home: React.FC = () => {
 
       {posts.map(post => {
         const mood = moodColors[post.mood ?? 'happy'] ?? moodColors.happy;
-        const isLiked = likedPosts[post.id] ?? false;
-        const likeCount = localLikes[post.id] ?? 0;
         const expanded = expandedPosts[post.id] ?? false;
         const postCommentsData = postComments(post.id);
         const isOwnPost = post.user_id === currentUserId;
@@ -155,9 +165,9 @@ const Home: React.FC = () => {
               <button
                 className="post-action-btn"
                 onClick={() => handleLike(post.id)}
-                style={{ color: isLiked ? '#e0345a' : undefined }}
+                style={{ color: isLiked(post.id) ? '#e0345a' : undefined }}
               >
-                {isLiked ? '♥' : '♡'} {likeCount}
+                {isLiked(post.id) ? '♥' : '♡'} {likeCount(post.id)}
               </button>
               <button className="post-action-btn" onClick={() => handleExpandComments(post.id)}>
                 ○ {postCommentsData.length}
