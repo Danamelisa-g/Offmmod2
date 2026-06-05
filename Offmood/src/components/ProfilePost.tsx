@@ -8,19 +8,19 @@ import type { Post } from '../types/profile';
 import '../styles/posts.css';
 
 const moodColors: Record<string, { bg: string; border: string; text: string }> = {
-  Anxious:   { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
-  Angry:     { bg: '#fde8e4', border: '#f47c6a', text: '#c0392b' },
-  Happy:     { bg: '#fef6e0', border: '#f7d06e', text: '#b8860b' },
+  Anxious: { bg: '#fce8f3', border: '#f4a7c3', text: '#c2547a' },
+  Angry: { bg: '#fde8e4', border: '#f47c6a', text: '#c0392b' },
+  Happy: { bg: '#fef6e0', border: '#f7d06e', text: '#b8860b' },
   Disgusted: { bg: '#e6f4ea', border: '#6abf8a', text: '#2e7d32' },
-  Sad:       { bg: '#e3f0f8', border: '#7ab3d4', text: '#1565c0' },
+  Sad: { bg: '#e3f0f8', border: '#7ab3d4', text: '#1565c0' },
 };
 
 const moodImgs: Record<string, string> = {
-  Anxious:   new URL('../assets/Ansioso.png',    import.meta.url).href,
-  Angry:     new URL('../assets/Enojado.png',    import.meta.url).href,
-  Happy:     new URL('../assets/Feliz.png',      import.meta.url).href,
+  Anxious: new URL('../assets/Ansioso.png', import.meta.url).href,
+  Angry: new URL('../assets/Enojado.png', import.meta.url).href,
+  Happy: new URL('../assets/Feliz.png', import.meta.url).href,
   Disgusted: new URL('../assets/Disgustado.png', import.meta.url).href,
-  Sad:       new URL('../assets/Triste.png',     import.meta.url).href,
+  Sad: new URL('../assets/Triste.png', import.meta.url).href,
 };
 
 const timeAgo = (dateStr: string) => {
@@ -46,21 +46,23 @@ const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
   const [commentInput, setCommentInput] = useState('');
   const [expanded, setExpanded] = useState(false);
 
-  const isLiked = userLikes.some(l => l.post_id === post.id);
-  const likeCount = allLikes.filter(l => l.post_id === post.id).length;
-  const postComments = comments.filter(c => c.post_id === post.id);
+  const postId = String(post.id);
+
+  const isLiked = userLikes.some(l => l.post_id === postId);
+  const likeCount = allLikes.filter(l => l.post_id === postId).length;
+  const postComments = comments.filter(c => c.post_id === postId);
 
   const handleLike = async () => {
     if (!currentUserId) return;
     if (isLiked) {
-      await dispatch(unlikePost({ user_id: currentUserId, post_id: post.id }));
+      await dispatch(unlikePost({ user_id: currentUserId, post_id: postId }));
     } else {
-      await dispatch(likePost({ user_id: currentUserId, post_id: post.id }));
+      await dispatch(likePost({ user_id: currentUserId, post_id: postId }));
     }
   };
 
   const handleExpandComments = () => {
-    if (!expanded) dispatch(fetchCommentsByPost(post.id));
+    if (!expanded) dispatch(fetchCommentsByPost(postId));
     setExpanded(prev => !prev);
   };
 
@@ -68,8 +70,7 @@ const ProfilePost: React.FC<ProfilePostProps> = ({ post }) => {
     const text = commentInput.trim();
     if (!text) return;
     await dispatch(createComment({
-      post_id: post.id,
-      user_id: currentUserId,
+      post_id: postId, user_id: currentUserId,
       content: text,
     }));
     setCommentInput('');
